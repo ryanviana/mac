@@ -1,0 +1,92 @@
+[
+  {
+      "name": "John Miller",
+      "channelName": "Motivation with John",
+      "expertise": "Motivation, Discipline, Self Improvement",
+      "channelLink": "https://youtube.com/motivationwithjohn",
+      "ratePerThousandClicks": "200",
+      "stars": 4.5,
+      "description": "Inspiring daily content on self-growth and positive mindset.",
+      "email": "john.miller@email.com"
+  },
+  {
+      "name": "Emma Watson",
+      "channelName": "Healthy Living",
+      "expertise": "Health, Wellness, Fitness",
+      "channelLink": "https://instagram.com/healthy_living",
+      "ratePerThousandClicks": "150",
+      "stars": 4.8,
+      "description": "Join me on a journey to healthier living and mindfulness.",
+      "email": "emma.watson@email.com"
+  },
+  {
+      "name": "Alex Green",
+      "channelName": "TechTalks",
+      "expertise": "Technology, Reviews, Gadgets",
+      "channelLink": "https://twitter.com/techtalks",
+      "ratePerThousandClicks": "250",
+      "stars": 4.2,
+      "description": "Latest tech reviews and insights into upcoming gadgets.",
+      "email": "alex.green@email.com"
+  },
+  {
+      "name": "Sophia Lee",
+      "channelName": "Sophia's Recipes",
+      "expertise": "Cooking, Healthy Recipes",
+      "channelLink": "https://youtube.com/sophiasrecipes",
+      "ratePerThousandClicks": "100",
+      "stars": 4.7,
+      "description": "Delicious yet simple recipes for everyday cooking.",
+      "email": "sophia.lee@email.com"
+  },
+  {
+      "name": "Daniel Smith",
+      "channelName": "Daily Tech Bytes",
+      "expertise": "Technology, Startups, Business",
+      "channelLink": "https://twitter.com/dailytechbytes",
+      "ratePerThousandClicks": "180",
+      "stars": 4.3,
+      "description": "Bringing you the latest in tech and startup news.",
+      "email": "daniel.smith@email.com"
+  },
+  {
+      "name": "Rachel Adams",
+      "channelName": "Yoga with Rachel",
+      "expertise": "Yoga, Mindfulness, Wellness",
+      "channelLink": "https://instagram.com/yogawithrachel",
+      "ratePerThousandClicks": "120",
+      "stars": 4.6,
+      "description": "Exploring the world of yoga and inner peace, one pose at a time.",
+      "email": "rachel.adams@email.com"
+  },
+  {
+      "name": "Mike Johnson",
+      "channelName": "Fitness Fundamentals",
+      "expertise": "Fitness, Bodybuilding, Healthy Lifestyle",
+      "channelLink": "https://youtube.com/fitnessfundamentals",
+      "ratePerThousandClicks": "220",
+      "stars": 4.0,
+      "description": "Get fit and healthy with simple, effective workouts.",
+      "email": "mike.johnson@email.com"
+  },
+  {
+      "name": "Lily Thomas",
+      "channelName": "Traveler's Diary",
+      "expertise": "Travel, Adventure, Culture",
+      "channelLink": "https://instagram.com/travelersdiary",
+      "ratePerThousandClicks": "190",
+      "stars": 4.9,
+      "description": "Join me on a journey to the most beautiful destinations around the world.",
+      "email": "lily.thomas@email.com"
+  },
+  {
+      "name": "Chris Wallace",
+      "channelName": "The Gourmet Chef",
+      "expertise": "Gourmet Cooking, Food Critique",
+      "channelLink": "https://twitter.com/thegourmetchef",
+      "ratePerThousandClicks": "160",
+      "stars": 4.4,
+      "description": "Exploring the art of gourmet cooking and fine dining experiences.",
+      "email": "chris.wallace@email.com"
+  }
+]

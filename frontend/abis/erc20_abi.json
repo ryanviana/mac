@@ -1,0 +1,30 @@
+[
+    {
+        "inputs": [
+            {
+                "name": "_name",
+                "type": "felt"
+            }
+        ],
+        "name": "storeName",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "_address",
+                "type": "felt"
+            }
+        ],
+        "name": "getName",
+        "outputs": [
+            {
+                "name": "name",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]
