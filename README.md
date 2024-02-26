@@ -1,7 +1,4 @@
-
-![Logo](https://github.com/pjvperes/avalanche-mac/assets/70733914/03ad5a8a-a338-4384-8de1-91bded6e0950)
-
-# 🌐 MAC - Marketplace for Advertisers and Creators
+<img width="1086" alt="mac-logo" src="https://github.com/ryanviana/mac/assets/70733914/432baa45-366b-4bc2-aaf4-16c88ec60aa2">
 
 Welcome to MAC, a decentralized marketplace revolutionizing the way Advertisers and Creators collaborate. We offer customizable advertisement deals with real-time, cross-border payments based on conversion and cost per milestone. Dive into the future of advertising with MAC! 🚀
 
@@ -23,14 +20,12 @@ Ever wondered how the MAC platform can transform the advertising world? Dive dee
 👉 [Watch our pitch and see MAC in action!](https://youtu.be/Ay8OJkFNwkg)
 
 
-👉 [Check MAC's slideshow presentation!](https://drive.google.com/file/d/1X24HTvm-QEDjLwpmm2w6y5RLPzAmGFSI/view?usp=sharing)
+👉 [Check MAC's slideshow presentation!](https://www.canva.com/design/DAF9ivFcW38/uxTvzCmQmfAECCjMqo2lug/view?utm_content=DAF9ivFcW38&utm_campaign=share_your_design&utm_medium=link&utm_source=shareyourdesignpanel)
 
 ## 🚀 Smart Contracts on Avalanche Blockchain
 
 ### Architecture
-![MAC](https://github.com/pjvperes/avalanche-mac/assets/70733914/d3eba9b4-906e-4602-b0df-90086f5c06f6)
-
-![MAC_R](https://github.com/pjvperes/avalanche-mac/assets/70733914/658e2185-a93f-4c5d-92f0-2eb759af0e69)
+![MAC](https://github.com/ryanviana/mac/assets/70733914/cb2d9af5-a3f2-4043-a34f-e4dac08f93b7)
 
 ![CHAINLINK](https://github.com/pjvperes/avalanche-mac/assets/70733914/2a1fb615-19c4-4514-bd71-b96c6db5a9c3)
 
