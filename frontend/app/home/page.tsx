@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import PayPerClickABI from "../../abis/PayPerClick_abi.json";
+import MacMainJSON from "../../abis/MacMain.json";
+import { ExternalProvider, JsonRpcFetchFunc } from "@ethersproject/providers";
+import { useConnectKit, useParticleProvider } from "@particle-network/connect-react-ui";
+import { ethers } from "ethers";
 import type { NextPage } from "next";
-import { Contract } from "starknet";
+import { hexToNumber } from "viem";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { useUser } from "~~/context/globalState";
 
@@ -25,22 +28,34 @@ interface Creator {
 const Home: NextPage = () => {
   const [creators, setCreators] = useState<Creator[]>([]);
   const { user } = useUser();
+  const ParticleProvider = useParticleProvider();
   const [visibleDropdown, setVisibleDropdown] = useState<number | null>(null);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formValues, setFormValues] = useState({
     description: "",
+    milestone: "",
     cpm: "",
     totalDollars: "",
     link: "",
     parameter: "",
   });
 
-  const { provider } = useUser(); // Call useUser at the top level
+  // const { provider } = useUser(); // Call useUser at the top level
+  // const { account, particleProvider } = useAccountInfo();
+  // const { disconnect } = useParticleConnect();
+  // const [address, setAddress] = useState();
+  const TOKEN_ADDRESS = "0xC070394CBB261eA11a0A82AC552b581f6EDbB039";
+  const CREATOR_ADDRESS = "0xdbA1F60551E6f3CF567aB2cb930517870aCbaD75";
+
+  const connectKit = useConnectKit();
+  const [isConnected, setIsConnected] = useState(false);
+  console.log(isConnected);
 
   async function createCampaign(
     descricao: string,
     token: string,
+    milestone: number,
     CPM: number,
     anunciante: string,
     criadorConteudo: string,
@@ -48,27 +63,26 @@ const Home: NextPage = () => {
     totalAmount: number,
     advertiserWalletAddress: string,
     creatorWalletAddress: string,
+    proposalId: string,
   ) {
     const body = JSON.stringify({
       descricao,
       token,
+      milestone,
       CPM,
       anunciante,
       criadorConteudo,
       status: "pending", // Assuming this is always "pending" initially
       concluido: false, // Assuming this is always "false" initially
       linkParametrizado,
-      starknetIndex: "-1", // Placeholder value
+      proposalId, // Placeholder value
       totalAmount,
       advertiserWalletAddress,
       creatorWalletAddress,
     });
 
-    console.log("Creating campaign with body:", body);
-    console.log("Anunciante:", anunciante); // Check the user type (optional)
-
     try {
-      const response = await fetch("https://mac-backend-six.vercel.app/announcements", {
+      const response = await fetch("https://backend-mac.vercel.app/announcements", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +104,7 @@ const Home: NextPage = () => {
       setIsLoading(true);
 
       try {
-        const response = await fetch("https://mac-backend-six.vercel.app/creators");
+        const response = await fetch("https://backend-mac.vercel.app/creators");
         const data = await response.json();
         setCreators(data); // Update state with fetched creators
       } catch (error) {
@@ -100,8 +114,15 @@ const Home: NextPage = () => {
       }
     };
 
+    // Check if the user is connected and update the state
+    const userInfo = connectKit.particle.auth.getUserInfo();
+    if (userInfo) {
+      setIsConnected(true);
+      console.log("User is connected:", userInfo);
+    }
+
     fetchCreators();
-  }, []);
+  }, [connectKit]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
     setFormValues({ ...formValues, [field]: e.target.value });
@@ -116,7 +137,7 @@ const Home: NextPage = () => {
     });
 
     try {
-      const response = await fetch("https://mac-backend-six.vercel.app/references", {
+      const response = await fetch("https://backend-mac.vercel.app/references", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -133,7 +154,7 @@ const Home: NextPage = () => {
 
   async function checkAdvertiser(companyEmail: string) {
     try {
-      const response = await fetch("https://mac-backend-six.vercel.app/announcers", {
+      const response = await fetch("https://backend-mac.vercel.app/announcers", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -162,22 +183,37 @@ const Home: NextPage = () => {
 
     const cpmBlockchainAmount = Math.round(parseFloat(formValues.cpm) * 100);
     const totalDollarsBlockchainAmount = Math.round(parseFloat(formValues.totalDollars) * 100);
+    const advertisementMilestone = formValues.milestone;
 
-    //const paymentTokenAddress = "0x049e5c0e9fbb072d7f908e77e117c76d026b8daf9720fe1d74fa3309645eabce"; //Insert the address according to CC Token
-    const payPerClickAddress = "0x02aa201c09f47146f54f1ab593f520a6b66672b6a99b6f2f082a148e7e9b1483";
+    const customProvider = new ethers.providers.Web3Provider(ParticleProvider as ExternalProvider | JsonRpcFetchFunc);
+    const signer = customProvider.getSigner();
 
-    const PPCContract = new Contract(PayPerClickABI, payPerClickAddress, provider);
+    // const TokenABI = TokenJSON.abi;
 
-    // const call = {
-    //   contractAddress: payPerClickAddress,
-    //   entrypoint: 'createPartnership',
-    //   calldata: [
-    //     creator.walletAddress,
-    //     3,
-    //     cpmBlockchainAmount,
-    //     totalDollarsBlockchainAmount
-    //   ]
-    // };
+    // const TokenContract = new ethers.Contract(TOKEN_ADDRESS, TokenABI, signer);
+    // const tokenTransaction = await TokenContract.transfer(
+    //   process.env.NEXT_PUBLIC_PAYMENT_CONTRACT,
+    //   totalDollarsBlockchainAmount
+    // );
+    // await tokenTransaction.wait();
+
+    const MacMainABI = MacMainJSON.abi;
+
+    const MacMainContract = new ethers.Contract(process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS!, MacMainABI, signer);
+
+    const transaction = await MacMainContract.createAdvertisment(
+      CREATOR_ADDRESS,
+      totalDollarsBlockchainAmount,
+      TOKEN_ADDRESS,
+      advertisementMilestone,
+      cpmBlockchainAmount,
+    );
+    await transaction.wait();
+    let proposalId = 0;
+
+    MacMainContract.on("ReturnId", id => {
+      proposalId = hexToNumber(id);
+    });
 
     const linkParametrizado = `https://mac-url.vercel.app/${formValues.parameter}`;
 
@@ -187,6 +223,7 @@ const Home: NextPage = () => {
       const idCampanha = await createCampaign(
         formValues.description,
         creator.paymentToken,
+        parseInt(formValues.milestone),
         parseFloat(formValues.cpm),
         anunciante,
         creator.email,
@@ -194,6 +231,7 @@ const Home: NextPage = () => {
         parseInt(formValues.totalDollars),
         advertiserData.walletAddress,
         creator.walletAddress,
+        proposalId.toString(),
       );
 
       console.log("Form submitted with values:", formValues);
@@ -203,9 +241,6 @@ const Home: NextPage = () => {
       createReference(formValues.link, reference, idCampanha);
 
       setIsFormSubmitted(true); // Set the form submission status to true
-
-      await PPCContract.createPartnership(creator.walletAddress, 1, cpmBlockchainAmount, totalDollarsBlockchainAmount);
-      //  await PPCContract.createPartnership("0x0684e73232a2a3C66f8678Ff9450C8D8CF1Fe17BF73B45a8Db21a5a2EfF9e51a", 3, 20, 40);
     } catch (error) {
       console.error("Error creating campaign:", error);
     }
@@ -298,6 +333,18 @@ const Home: NextPage = () => {
                               type="text"
                               value={formValues.totalDollars}
                               onChange={e => handleInputChange(e, "totalDollars")}
+                            />
+                          </div>
+                          <div className="mb-2">
+                            <label className="block text-gray-700 text-sm font-bold" htmlFor="milestone">
+                              Milestone
+                            </label>
+                            <input
+                              id="milestone"
+                              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                              type="text"
+                              value={formValues.milestone}
+                              onChange={e => handleInputChange(e, "milestone")}
                             />
                           </div>
                           <div className="mb-2">

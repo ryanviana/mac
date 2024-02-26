@@ -2,12 +2,12 @@
 module.exports = {
   content: ["./app/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}", "./utils/**/*.{js,ts,jsx,tsx}"],
   plugins: [require("daisyui")],
-  darkTheme: "scaffoldEthDark",
+  darkTheme: "avalDark",
   // DaisyUI theme colors
   daisyui: {
     themes: [
       {
-        scaffoldEth: {
+        avalancheMac: {
           primary: "#93BBFB",
           "primary-content": "#212638",
           secondary: "#DAE8FF",
@@ -39,7 +39,7 @@ module.exports = {
         },
       },
       {
-        scaffoldEthDark: {
+        avalancheMacDark: {
           primary: "#212638",
           "primary-content": "#F9FBFF",
           secondary: "#323f61",

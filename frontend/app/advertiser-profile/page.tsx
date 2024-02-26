@@ -27,7 +27,7 @@ const AdvertiserProfile: NextPage = () => {
   // Já testei e está funcionando perfeitamente
   async function checkAdvertiserById(advertiserId: string) {
     try {
-      const response = await fetch(`https://mac-backend-six.vercel.app/announcers/${advertiserId}`, {
+      const response = await fetch(`https://backend-mac.vercel.app/announcers/${advertiserId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +54,7 @@ const AdvertiserProfile: NextPage = () => {
   async function updateAdvertiser(id: string, updateData: any) {
     try {
       // If the advertiser is found, send a PATCH request to update it
-      const updateResponse = await fetch(`https://mac-backend-six.vercel.app/announcers/${id}`, {
+      const updateResponse = await fetch(`https://backend-mac.vercel.app/announcers/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -1,24 +1,24 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import { Metadata } from "next";
-import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
+import { AvalancheMacAppWithProviders } from "~~/components/AvalancheMacAppWithProviders";
 import "~~/styles/globals.css";
 
 const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
   ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
   : `http://localhost:${process.env.PORT}`;
-const imageUrl = `${baseUrl}/thumbnail.jpg`;
+const imageUrl = `${baseUrl}/thumbnail.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "Starknet MAC App",
-    template: "%s | Starknet MAC",
+    default: "Avalanche MAC App",
+    template: "%s | Avalanche MAC",
   },
   description: "Built by RGB Group",
   openGraph: {
     title: {
-      default: "Starknet MAC App",
-      template: "%s | Starknet MAC",
+      default: "Avalanche MAC App",
+      template: "%s | Avalanche MAC",
     },
     description: "Built by RGB Group",
     images: [
@@ -31,8 +31,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     images: [imageUrl],
     title: {
-      default: "Starknet MAC",
-      template: "%s | Starknet MAC",
+      default: "Avalanche MAC",
+      template: "%s | Avalanche MAC",
     },
     description: "Built by RGB Group",
   },
@@ -41,14 +41,14 @@ export const metadata: Metadata = {
   },
 };
 
-const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
+const AvalancheMacApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <html>
       <body>
-        <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
+        <AvalancheMacAppWithProviders>{children}</AvalancheMacAppWithProviders>
       </body>
     </html>
   );
 };
 
-export default ScaffoldEthApp;
+export default AvalancheMacApp;

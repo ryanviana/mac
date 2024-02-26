@@ -25,7 +25,7 @@ const CreatorProfile: NextPage = () => {
 
   async function checkCreatorById(creatorId: string) {
     try {
-      const response = await fetch(`https://mac-backend-six.vercel.app/creators/${creatorId}`, {
+      const response = await fetch(`https://backend-mac.vercel.app/creators/${creatorId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +50,7 @@ const CreatorProfile: NextPage = () => {
 
   async function updateCreator(id: string, updateData: any) {
     try {
-      const updateResponse = await fetch(`https://mac-backend-six.vercel.app/creators/${id}`, {
+      const updateResponse = await fetch(`https://backend-mac.vercel.app/creators/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import MacMainJSON from "../../abis/MacMain.json";
+import { ExternalProvider, JsonRpcFetchFunc } from "@ethersproject/providers";
+import { useParticleProvider } from "@particle-network/connect-react-ui";
+import { ethers } from "ethers";
 import type { NextPage } from "next";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { useUser } from "~~/context/globalState";
@@ -33,13 +37,14 @@ const ProposalsReceived: NextPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [clickCounts, setClickCounts] = useState<{ [key: string]: number | "loading" | null }>({});
+  const ParticleProvider = useParticleProvider();
 
   const [expandedProposals, setExpandedProposals] = useState<{ [key: string]: boolean }>({});
   const [advertiserDetails, setAdvertiserDetails] = useState<{ [key: string]: Advertiser }>({});
 
   async function getCampaignsByCreator(creatorEmail: string) {
     try {
-      const response = await fetch("https://mac-backend-six.vercel.app/announcements", {
+      const response = await fetch("https://backend-mac.vercel.app/announcements", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +76,7 @@ const ProposalsReceived: NextPage = () => {
 
   async function checkAdvertiser(email: string): Promise<Advertiser | null> {
     try {
-      const response = await fetch(`https://mac-backend-six.vercel.app/announcers?email=${encodeURIComponent(email)}`, {
+      const response = await fetch(`https://backend-mac.vercel.app/announcers?email=${encodeURIComponent(email)}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -118,9 +123,22 @@ const ProposalsReceived: NextPage = () => {
   };
 
   const handleAcceptProposal = async (campaignId: string) => {
+    const customProvider = new ethers.providers.Web3Provider(ParticleProvider as ExternalProvider | JsonRpcFetchFunc);
+
+    const signer = customProvider.getSigner();
+
+    const MacMainABI = MacMainJSON.abi;
+    const MacMainAddress = "0x07c420C56BaeFc7cD6c4828d58d68e6ba23B1d28";
+
+    const MacMainContract = new ethers.Contract(MacMainAddress, MacMainABI, signer);
+
+    const transaction = await MacMainContract.acceptAdvertisment(3); // TODO: Index logic here
+
+    await transaction.wait();
+
     try {
       // Send a PATCH request to update the campaign
-      const response = await fetch(`https://mac-backend-six.vercel.app/announcements/${campaignId}`, {
+      const response = await fetch(`https://backend-mac.vercel.app/announcements/${campaignId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -150,9 +168,24 @@ const ProposalsReceived: NextPage = () => {
   };
 
   const handleDenyProposal = async (campaignId: string) => {
+    if (ParticleProvider) {
+      const customProvider = new ethers.providers.Web3Provider(ParticleProvider as ExternalProvider | JsonRpcFetchFunc);
+
+      const signer = customProvider.getSigner();
+
+      const MacMainABI = MacMainJSON.abi;
+      const MacMainAddress = "0x07c420C56BaeFc7cD6c4828d58d68e6ba23B1d28";
+
+      const MacMainContract = new ethers.Contract(MacMainAddress, MacMainABI, signer);
+
+      const transaction = await MacMainContract.rejectAdvertisment(4); // TODO: Index logic here
+
+      await transaction.wait();
+    }
+
     try {
       // Send a PATCH request to update the campaign
-      const response = await fetch(`https://mac-backend-six.vercel.app/announcements/${campaignId}`, {
+      const response = await fetch(`https://backend-mac.vercel.app/announcements/${campaignId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -194,15 +227,12 @@ const ProposalsReceived: NextPage = () => {
         return "Error"; // Or any other error handling
       }
 
-      const response = await fetch(
-        `https://mac-backend-six.vercel.app/clicks?reference=${encodeURIComponent(reference)}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+      const response = await fetch(`https://backend-mac.vercel.app/clicks?reference=${encodeURIComponent(reference)}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+      });
 
       const data = await response.json();
       const count = data.length;

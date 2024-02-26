@@ -2,21 +2,25 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import MacMainJSON from "../abis/MacMain.json";
+import { ConnectButton, useConnectKit } from "@particle-network/connect-react-ui";
+import "@particle-network/connect-react-ui/dist/index.css";
+import "dotenv/config";
+import { ethers } from "ethers";
 import type { NextPage } from "next";
 import { BuildingStorefrontIcon, UserIcon } from "@heroicons/react/24/solid";
 import { useUser } from "~~/context/globalState";
 
 const LoginPage: NextPage = () => {
-  // State to store email and password input
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [selectedType, setSelectedType] = useState("none");
+  const [isNewProfile, setIsNewProfile] = useState(false);
   const { setUser } = useUser();
-  const [isLoading, setIsLoading] = useState(false);
+  const connectKit = useConnectKit();
+  // const ParticleProvider = useParticleProvider();
 
   const router = useRouter();
 
-  async function createNewCreator(email: string) {
+  async function createNewCreator(email: string, walletAddress: string) {
     const body = JSON.stringify({
       name: "define",
       biography: "define",
@@ -26,17 +30,35 @@ const LoginPage: NextPage = () => {
       link: "define",
       email: email,
       CPM: 0,
-      walletAddress: "define",
+      walletAddress: walletAddress,
+      paymentToken: "define",
     });
 
+    const walletKey = process.env.NEXT_PUBLIC_ADMIN_KEY; // Nunca exponha sua chave privada em código de produção
+
+    const provider = new ethers.providers.JsonRpcProvider(
+      "https://avalanche-fuji.infura.io/v3/84ad611c167b499ead05e7794fbd84a8",
+    );
+    const wallet = new ethers.Wallet(walletKey!, provider);
+
+    const MacMainABI = MacMainJSON.abi;
+    const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
+
+    const MacMainContract = new ethers.Contract(MacMainAddress!, MacMainABI, wallet);
+    const transaction = await MacMainContract.grantCreatorRole(walletAddress);
+
+    await transaction.wait();
+
     try {
-      const response = await fetch("https://mac-backend-six.vercel.app/creators", {
+      const response = await fetch("https://backend-mac.vercel.app/creators", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body,
       });
+
+      setIsNewProfile(true);
 
       const data = await response.json();
       console.log("Creator created:", data);
@@ -46,9 +68,9 @@ const LoginPage: NextPage = () => {
     }
   }
 
-  async function checkCreator(email: string) {
+  async function checkCreator(email: string, walletAddress: string) {
     try {
-      const response = await fetch("https://mac-backend-six.vercel.app/creators", {
+      const response = await fetch("https://backend-mac.vercel.app/creators", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +85,7 @@ const LoginPage: NextPage = () => {
         return filteredCreators[0];
       } else {
         console.log("No creator found with that email.");
-        const newCreator = createNewCreator(email);
+        const newCreator = createNewCreator(email, walletAddress);
         console.log("New Creator:", newCreator);
         return newCreator;
       }
@@ -73,24 +95,41 @@ const LoginPage: NextPage = () => {
     }
   }
 
-  async function createNewAdvertiser(email: string) {
+  async function createNewAdvertiser(email: string, walletAddress: string) {
     const body = JSON.stringify({
       razaoSocial: "define",
       quantidadeAnunciosFeitos: 0,
       stars: 0,
       link: "define",
       email: email,
-      walletAddress: "0xTeste",
+      walletAddress: walletAddress,
     });
 
+    const walletKey = process.env.NEXT_PUBLIC_ADMIN_KEY; // Nunca exponha sua chave privada em código de produção
+
+    const provider = new ethers.providers.JsonRpcProvider(
+      "https://avalanche-fuji.infura.io/v3/84ad611c167b499ead05e7794fbd84a8",
+    );
+    const wallet = new ethers.Wallet(walletKey!, provider);
+
+    const MacMainABI = MacMainJSON.abi;
+    const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
+
+    const MacMainContract = new ethers.Contract(MacMainAddress!, MacMainABI, wallet);
+    const transaction = await MacMainContract.grantAdvertiserRole(walletAddress);
+
+    await transaction.wait();
+
     try {
-      const response = await fetch("https://mac-backend-six.vercel.app/announcers", {
+      const response = await fetch("https://backend-mac.vercel.app/announcers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body,
       });
+
+      setIsNewProfile(true);
 
       const data = await response.json();
       console.log("Advertiser created:", data);
@@ -100,9 +139,9 @@ const LoginPage: NextPage = () => {
     }
   }
 
-  async function checkAdvertiser(companyEmail: string) {
+  async function checkAdvertiser(companyEmail: string, walletAddress: string) {
     try {
-      const response = await fetch("https://mac-backend-six.vercel.app/announcers", {
+      const response = await fetch("https://backend-mac.vercel.app/announcers", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -119,8 +158,9 @@ const LoginPage: NextPage = () => {
         return filteredAdvertisers[0];
       } else {
         console.log("No advertiser found with that email.");
-        const newAdvertiser = createNewAdvertiser(companyEmail);
+        const newAdvertiser = createNewAdvertiser(companyEmail, walletAddress);
         console.log("New Advertiser:", newAdvertiser);
+
         return newAdvertiser;
       }
     } catch (error) {
@@ -129,46 +169,64 @@ const LoginPage: NextPage = () => {
     }
   }
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setIsLoading(true);
-
+  const handleConnect = async () => {
     try {
       let foundUser;
 
-      if (selectedType === "advertiser") {
-        foundUser = await checkAdvertiser(email);
-      } else if (selectedType === "creator") {
-        foundUser = await checkCreator(email);
+      const userInfo = connectKit.particle.auth.getUserInfo();
+      if (userInfo) {
+        console.log(userInfo);
+      }
+
+      const userEmail =
+        userInfo?.google_email ||
+        userInfo?.email ||
+        userInfo?.facebook_email ||
+        userInfo?.apple_email ||
+        userInfo?.twitter_email ||
+        userInfo?.github_email ||
+        userInfo?.linkedin_email ||
+        userInfo?.discord_email ||
+        userInfo?.microsoft_email;
+
+      const userAddress = userInfo?.wallets?.[0]?.public_address;
+
+      if (selectedType === "advertiser" && userEmail && userAddress) {
+        foundUser = await checkAdvertiser(userEmail, userAddress);
+      } else if (selectedType === "creator" && userEmail && userAddress) {
+        foundUser = await checkCreator(userEmail, userAddress);
       } else {
         throw new Error("Invalid user type");
       }
-
       if (foundUser) {
         setUser({ id: foundUser._id, type: selectedType, email: foundUser.email }); // Update global user state
         console.log("User id:", foundUser._id);
       }
-
       // Proceed with login if user exists or a new user has been created
       const response = await fetch("/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, type: selectedType }),
+        body: JSON.stringify({ userEmail, type: selectedType }),
       });
-
       if (!response.ok) {
         throw new Error("Login request failed");
       }
-
       const data = await response.json();
       localStorage.setItem("token", data.token);
-      router.push("/home");
+
+      if (isNewProfile && selectedType === "advertiser") {
+        router.push("/advertiser-profile");
+        setIsNewProfile(false);
+      } else if (isNewProfile && selectedType === "creator") {
+        router.push("/creator-profile");
+        setIsNewProfile(false);
+      } else {
+        router.push("/home");
+      }
     } catch (error) {
       console.error("An error occurred during the login process: ", error);
-    } finally {
-      setIsLoading(false); // Reset loading status
     }
   };
 
@@ -197,60 +255,17 @@ const LoginPage: NextPage = () => {
           </div>
         </div>
 
-        <div className="border border-blue-700 w-11/12 p-12 sm:w-8/12 md:w-6/12 lg:w-4/12 2xl:w-3/12 sm:px-10 sm:py-6 bg-base-100 rounded-xl shadow-lg">
-          <h2 className="text-center mt-8 font-semibold text-3xl lg:text-4xl">
+        <div className=" flex flex-col border border-blue-700 w-11/12 p-6 sm:w-8/12 md:w-6/12 lg:w-4/12 2xl:w-3/12 sm:px-10 sm:py-6 bg-base-100 rounded-xl shadow-lg items-center">
+          <h2 className="text-center font-semibold text-3xl lg:text-4xl mb-6">
             Login {selectedType === "advertiser" ? "as Advertiser" : selectedType === "creator" ? "as Creator" : ""}
           </h2>
-          <form className="mt-10" onSubmit={handleSubmit}>
-            <label htmlFor="email" className="block text-xs font-semibold uppercase">
-              E-mail
-            </label>
-            <input
-              id="email"
-              type="email"
-              name="email"
-              placeholder="Type your e-mail"
-              autoComplete="email"
-              className="block w-full py-3 px-2 mt-2 appearance-none 
-                border-b-2 border-gray-300
-                focus:text-gray-500 focus:outline-none focus:border-indigo-300"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-            />
-            <label htmlFor="password" className="block mt-10 text-xs font-semibold uppercase">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              placeholder="Type your password"
-              autoComplete="current-password"
-              className="block w-full py-3 px-2 mt-2 mb-4 appearance-none 
-                border-b-2 border-gray-300
-                focus:text-gray-500 focus:outline-none focus:border-indigo-300"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-            />
-            <button
-              type="submit"
-              className={`w-full py-3 mt-10 ${isLoading ? "bg-indigo-300" : "bg-indigo-600"} rounded-md
-              font-medium text-white uppercase
-              focus:outline-none hover:bg-indigo-700 hover:shadow-none`}
-              disabled={isLoading} // Disable button when loading
-            >
-              {isLoading ? "LOADING..." : "Login"}
-            </button>
-            <div className="sm:flex sm:flex-wrap mt-8 sm:mb-4 text-sm text-center">
-              <div className="flex-2 underline text-indigo-600 hover:text-indigo-800">Forgot password</div>
-
-              <p className="flex-1 text-gray-700 text-md mx-4 my-1 sm:my-auto">or</p>
-
-              <div className="flex-2 underline text-indigo-600 hover:text-indigo-800">Register</div>
-            </div>
-          </form>
+          <ConnectButton />
+          <button
+            className="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            onClick={handleConnect}
+          >
+            Enter
+          </button>
         </div>
       </div>
     </div>

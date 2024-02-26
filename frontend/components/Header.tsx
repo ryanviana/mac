@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ConnectWallet } from "./ConnectWallet";
+import { useAccountInfo, useParticleConnect } from "@particle-network/connect-react-ui";
+import "@particle-network/connect-react-ui/dist/index.css";
 import {
   ArrowLeftOnRectangleIcon,
   Bars3Icon,
@@ -14,8 +15,6 @@ import {
   HomeIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { FaucetButton } from "~~/components/scaffold-eth";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
 type HeaderMenuLink = {
   label: string;
@@ -97,10 +96,6 @@ export const HeaderMenuLinks = () => {
 export const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
-  useOutsideClick(
-    burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), []),
-  );
 
   const router = useRouter();
 
@@ -112,8 +107,15 @@ export const Header = () => {
     // Add any other cleanup logic if needed
 
     // Redirect to the root of the app
+    disconnect();
     router.push("/");
   };
+
+  // const connectKit = useConnectKit();
+  // const userInfo = connectKit?.particle?.auth.getUserInfo();
+
+  const { disconnect } = useParticleConnect();
+  const { account } = useAccountInfo();
 
   return (
     <div className="sticky lg:static top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary px-0 sm:px-2">
@@ -145,7 +147,7 @@ export const Header = () => {
             <Image alt="MAC logo" className="cursor-pointer" fill src="/favicon.png" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold leading-tight">Starknet MAC</span>
+            <span className="font-bold leading-tight">Avalanche MAC</span>
             <span className="text-xs">Marketplace for Advertisers and Creators</span>
           </div>
         </Link>
@@ -154,12 +156,13 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end flex-grow mr-4">
-        <button className="btn btn-ghost" onClick={handleLogout} title="Logout">
-          {logoutLink.icon}
-          <span>{logoutLink.label}</span>
-        </button>
         <ConnectWallet />
-        <FaucetButton />
+        {account && (
+          <button className="ml-2 btn btn-ghost" onClick={handleLogout} title="Disconnect">
+            {logoutLink.icon}
+            <span>{logoutLink.label}</span>
+          </button>
+        )}
       </div>
     </div>
   );
