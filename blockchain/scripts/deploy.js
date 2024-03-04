@@ -7,7 +7,6 @@ const source = fs
   .toString();
 
 const router = "0xA9d587a00A31A52Ed70D6026794a8FC5E2F5dCb0";
-const initialSupply = 1000000;
 
 async function main() {
   const AccessControl = await ethers.deployContract("MACAccessControl");
@@ -15,7 +14,7 @@ async function main() {
   const accessControlAddress = AccessControl.target;
   console.log("AccessControl deployed to:", accessControlAddress);
 
-  const Token = await ethers.deployContract("Token", [initialSupply]);
+  const Token = await ethers.deployContract("Token");
   await Token.waitForDeployment();
   const tokenAddress = Token.target;
   console.log("Token deployed to:", tokenAddress);
@@ -32,29 +31,6 @@ async function main() {
   const paymentAddress = Payment.target;
   console.log("Payment deployed to:", paymentAddress);
 
-  const ClickCountOracle = await ethers.deployContract("ClickCountFunction", [
-    router,
-    advertisementAddress,
-    source,
-  ]);
-  await ClickCountOracle.waitForDeployment();
-  const clickCountAddress = ClickCountOracle.target;
-  console.log("ClickCountFunction deployed to:", clickCountAddress);
-
-  const ActiveAdsKeeper = await ethers.deployContract("ActiveAdsKeeper", [
-    clickCountAddress,
-  ]);
-  await ActiveAdsKeeper.waitForDeployment();
-  console.log("ActiveAdsKeeper deployed to:", ActiveAdsKeeper.target);
-
-  const MilestoneKeeper = await ethers.deployContract(
-    "MilestonePaymentKeeper",
-    [paymentAddress, advertisementAddress]
-  );
-  await MilestoneKeeper.waitForDeployment();
-  const milestoneAddress = MilestoneKeeper.target;
-  console.log("MilestoneKeeper deployed to:", milestoneAddress);
-
   const MACPlatformManager = await ethers.deployContract("MacMain", [
     advertisementAddress,
     paymentAddress,
@@ -62,6 +38,29 @@ async function main() {
   ]);
   await MACPlatformManager.waitForDeployment();
   console.log("MACPlatformManager deployed to:", MACPlatformManager.target);
+
+  // const ClickCountOracle = await ethers.deployContract("ClickCountFunction", [
+  //   router,
+  //   advertisementAddress,
+  //   source,
+  // ]);
+  // await ClickCountOracle.waitForDeployment();
+  // const clickCountAddress = ClickCountOracle.target;
+  // console.log("ClickCountFunction deployed to:", clickCountAddress);
+
+  // const ActiveAdsKeeper = await ethers.deployContract("ActiveAdsKeeper", [
+  //   clickCountAddress,
+  // ]);
+  // await ActiveAdsKeeper.waitForDeployment();
+  // console.log("ActiveAdsKeeper deployed to:", ActiveAdsKeeper.target);
+
+  // const MilestoneKeeper = await ethers.deployContract(
+  //   "MilestonePaymentKeeper",
+  //   [paymentAddress, advertisementAddress]
+  // );
+  // await MilestoneKeeper.waitForDeployment();
+  // const milestoneAddress = MilestoneKeeper.target;
+  // console.log("MilestoneKeeper deployed to:", milestoneAddress);
 }
 
 main().catch((error) => {

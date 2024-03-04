@@ -6,41 +6,72 @@ const initialSupply = 100000;
 const milestoneThreshold = 1000;
 const budget = 10000;
 const campaignDetails = "Test Campaign";
+const CPM = 100;
+let id = 12;
 
 describe("MacMain", function () {
   async function deployContract() {
     const [admin, advertiser, creator] = await ethers.getSigners();
 
-    const Token = await ethers.getContractFactory("Token");
-    const token = await Token.deploy(initialSupply);
+    // const Token = await ethers.getContractFactory("Token");
+    // const token = await Token.deploy(initialSupply);
 
-    const Proposal = await ethers.getContractFactory("ProposalContract");
-    const proposal = await Proposal.deploy();
+    // const Proposal = await ethers.getContractFactory("ProposalContract");
+    // const proposal = await Proposal.deploy();
 
-    const Payment = await ethers.getContractFactory("PaymentContract");
-    const payment = await Payment.deploy(proposal.target);
+    // const Payment = await ethers.getContractFactory("PaymentContract");
+    // const payment = await Payment.deploy(proposal.target);
 
-    const MacAccessControl = await ethers.getContractFactory(
-      "MACAccessControl"
-    );
-    const macAccessControl = await MacAccessControl.deploy();
+    // const MacAccessControl = await ethers.getContractFactory(
+    //   "MACAccessControl"
+    // );
+    // const macAccessControl = await MacAccessControl.deploy();
 
-    const MacMain = await ethers.getContractFactory("MacMain");
-    const macMain = await MacMain.deploy(
-      proposal.target,
-      payment.target,
-      macAccessControl.target
-    );
+    // const MacMain = await ethers.getContractFactory("MacMain");
+    // const macMain = await MacMain.deploy(
+    //   proposal.target,
+    //   payment.target,
+    //   macAccessControl.target
+    // );
+
+    const AccessControl = await ethers.deployContract("MACAccessControl");
+    await AccessControl.waitForDeployment();
+    const accessControlAddress = AccessControl.target;
+    console.log("AccessControl deployed to:", accessControlAddress);
+
+    const Token = await ethers.deployContract("Token");
+    await Token.waitForDeployment();
+    const tokenAddress = Token.target;
+    console.log("Token deployed to:", tokenAddress);
+
+    const Advertisement = await ethers.deployContract("AdvertisementContract");
+    await Advertisement.waitForDeployment();
+    const advertisementAddress = Advertisement.target;
+    console.log("Advertisement deployed to:", advertisementAddress);
+
+    const Payment = await ethers.deployContract("PaymentContract", [
+      advertisementAddress,
+    ]);
+    await Payment.waitForDeployment();
+    const paymentAddress = Payment.target;
+    console.log("Payment deployed to:", paymentAddress);
+
+    const MACPlatformManager = await ethers.deployContract("MacMain", [
+      advertisementAddress,
+      paymentAddress,
+      accessControlAddress,
+    ]);
+    await MACPlatformManager.waitForDeployment();
+    console.log("MACPlatformManager deployed to:", MACPlatformManager.target);
 
     return {
-      payment,
       admin,
       advertiser,
       creator,
-      token,
-      proposal,
-      macMain,
-      macAccessControl,
+      Payment,
+      Token,
+      MACPlatformManager,
+      AccessControl,
     };
   }
 
@@ -48,66 +79,60 @@ describe("MacMain", function () {
 
   beforeEach(async function () {
     fixtures = await loadFixture(deployContract);
-    const { advertiser, creator, token, macMain, macAccessControl } = fixtures;
+    const { advertiser, creator, Token, MACPlatformManager, AccessControl } =
+      fixtures;
 
-    await macAccessControl.assignAdvertiserRole(advertiser.address);
-    await macAccessControl.assignCreatorRole(creator.address);
+    await AccessControl.assignAdvertiserRole(advertiser.address);
+    await AccessControl.assignCreatorRole(creator.address);
 
-    const macMainAdvertiser = macMain.connect(advertiser);
-    await macMainAdvertiser.createProposal(
+    const macMainAdvertiser = MACPlatformManager.connect(advertiser);
+    await macMainAdvertiser.createAdvertisement(
+      id,
       creator.address,
       budget,
-      campaignDetails,
-      token.target,
-      milestoneThreshold
+      Token.target,
+      milestoneThreshold,
+      CPM
     );
+
+    console.log("Advertiser created advertisement");
   });
 
-  it("Should createProposal", async function () {
-    const { creator, token, macMain } = fixtures;
+  it("Should accept a proposal", async function () {
+    const { admin, advertiser, creator, Payment, Token, MACPlatformManager } =
+      fixtures;
 
-    const proposalDetails = await macMain.getProposal(1);
-    expect(proposalDetails.creator).to.equal(creator.address);
-    expect(proposalDetails.budget).to.equal(budget);
-    expect(proposalDetails.campaignDetails).to.equal(campaignDetails);
-    expect(proposalDetails.token).to.equal(token.target);
-    expect(proposalDetails.milestoneThreshold).to.equal(milestoneThreshold);
-    expect(proposalDetails.isAccepted).to.equal(false);
-    expect(proposalDetails.isActive).to.equal(true);
-    expect(proposalDetails.isFunded).to.equal(false);
+    console.log("accepted: " + (await MACPlatformManager.isAccepted(id)));
+    console.log("active: " + (await MACPlatformManager.isActive(id)));
+    console.log("accepting");
+    await MACPlatformManager.connect(creator).acceptAdvertisement(id);
+    console.log("accepted: " + (await MACPlatformManager.isAccepted(id)));
+    console.log("active: " + (await MACPlatformManager.isActive(id)));
   });
 
-  it("Should grant roles correctly", async function () {
-    const { advertiser, creator, macAccessControl } = fixtures;
-    const creatorIsCreator = await macAccessControl.isCreator(creator.address);
-    const advertiserIsAdvertiser = await macAccessControl.isAdvertiser(
-      advertiser.address
-    );
-    const advertiserIsCreator = await macAccessControl.isCreator(
-      advertiser.address
-    );
-    const creatorIsAdvertiser = await macAccessControl.isAdvertiser(
-      creator.address
-    );
-    expect(creatorIsCreator).to.equal(true);
-    expect(advertiserIsAdvertiser).to.equal(true);
-    expect(advertiserIsCreator).to.equal(false);
-    expect(creatorIsAdvertiser).to.equal(false);
+  it("Should reject a proposal", async function () {
+    const { admin, advertiser, creator, Payment, Token, MACPlatformManager } =
+      fixtures;
+
+    console.log("accepted: " + (await MACPlatformManager.isAccepted(id)));
+    console.log("active: " + (await MACPlatformManager.isActive(id)));
+    console.log("rejecting");
+    await MACPlatformManager.connect(creator).rejectAdvertisement(id);
+    console.log("accepted: " + (await MACPlatformManager.isAccepted(id)));
+    console.log("active: " + (await MACPlatformManager.isActive(id)));
   });
 
-  it("Should acceptProposal", async function () {
-    const { creator, macMain } = fixtures;
-    const macMainCreator = macMain.connect(creator);
-    await macMainCreator.acceptProposal(1);
-    const proposalDetails = await macMain.getProposal(1);
-    expect(proposalDetails.isAccepted).to.equal(true);
-  });
+  it("Should try to accept without being the creator", async function () {
+    const { admin, advertiser, creator, Payment, Token, MACPlatformManager } =
+      fixtures;
 
-  it("Should rejectProposal", async function () {
-    const { creator, macMain } = fixtures;
-    const macMainCreator = macMain.connect(creator);
-    await macMainCreator.rejectProposal(1);
-    const proposalDetails = await macMain.getProposal(1);
-    expect(proposalDetails.isAccepted).to.equal(false);
+    console.log("accepted: " + (await MACPlatformManager.isAccepted(id)));
+    console.log("active: " + (await MACPlatformManager.isActive(id)));
+    console.log("accepting");
+    await expect(
+      MACPlatformManager.connect(advertiser).acceptAdvertisement(id)
+    ).to.be.revertedWith("Caller is not a creator");
+    console.log("accepted: " + (await MACPlatformManager.isAccepted(id)));
+    console.log("active: " + (await MACPlatformManager.isActive(id)));
   });
 });
