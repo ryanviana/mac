@@ -4,12 +4,12 @@ pragma solidity ^0.8.19;
 import {FunctionsClient} from "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/FunctionsClient.sol";
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
 import {FunctionsRequest} from "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/libraries/FunctionsRequest.sol";
-import "../interfaces/IAdvertisment.sol";
+import "../interfaces/IAdvertisement.sol";
 
 contract ClickCountFunction is FunctionsClient, ConfirmedOwner {
     using FunctionsRequest for FunctionsRequest.Request;
 
-    IAdvertisment public advertismentContract;
+    IAdvertisement public advertisementContract;
 
     string public source;
     bytes32 public s_lastRequestId;
@@ -26,10 +26,10 @@ contract ClickCountFunction is FunctionsClient, ConfirmedOwner {
 
     constructor(
         address router,
-        address _advertismentContractAddress,
+        address _advertisementContractAddress,
         string memory _source
     ) FunctionsClient(router) ConfirmedOwner(msg.sender) {
-        advertismentContract = IAdvertisment(_advertismentContractAddress);
+        advertisementContract = IAdvertisement(_advertisementContractAddress);
         source = _source;
     }
 
@@ -114,22 +114,24 @@ contract ClickCountFunction is FunctionsClient, ConfirmedOwner {
         s_lastResponse = response;
         s_lastError = err;
 
-        (uint256 currentClicksCount, uint256 advertismentId) = abi.decode(
+        (uint256 currentClicksCount, uint256 advertisementId) = abi.decode(
             response,
             (uint256, uint256)
         );
 
         //GET ADS INFO
 
-        IAdvertisment.Advertisment memory advertisment = advertismentContract
-            .getAdvertisment(advertismentId);
+        IAdvertisement.Advertisement
+            memory advertisement = advertisementContract.getAdvertisement(
+                advertisementId
+            );
 
-        uint256 milestone = advertisment.milestoneThreshold;
-        uint256 CPM = advertisment.CPM;
+        uint256 milestone = advertisement.milestoneThreshold;
+        uint256 CPM = advertisement.CPM;
 
         // CALCULATE AMOUNT TO PAY
 
-        uint256 lastClicksCount = clicks[advertismentId];
+        uint256 lastClicksCount = clicks[advertisementId];
         uint256 unpaidClicks = lastClicksCount % milestone;
         uint256 newClicks = currentClicksCount - lastClicksCount;
         uint256 totalUnpaidClicks = unpaidClicks + newClicks;
@@ -138,14 +140,14 @@ contract ClickCountFunction is FunctionsClient, ConfirmedOwner {
 
         //SET NEW INFO
 
-        clicks[advertismentId] = currentClicksCount;
+        clicks[advertisementId] = currentClicksCount;
 
-        advertismentContract.setClicks(advertismentId, currentClicksCount);
-        advertismentContract.setAmountToBePaid(advertismentId, amountToPay);
+        advertisementContract.setClicks(advertisementId, currentClicksCount);
+        advertisementContract.setAmountToBePaid(advertisementId, amountToPay);
 
         //EMIT LOGS
 
-        emit MilestoneReached(advertismentId, amountToPay);
+        emit MilestoneReached(advertisementId, amountToPay);
         emit Response(requestId, s_lastResponse, s_lastError);
     }
 }

@@ -48,16 +48,16 @@ contract ActiveAdsKeeper is ILogAutomation {
         bytes memory
     ) external pure returns (bool upkeepNeeded, bytes memory performData) {
         upkeepNeeded = true;
-        uint256 advertismentId = bytes32ToUint256(log.topics[1]);
-        performData = abi.encode(advertismentId);
+        uint256 advertisementId = bytes32ToUint256(log.topics[1]);
+        performData = abi.encode(advertisementId);
     }
 
     function performUpkeep(bytes calldata performData) external override {
         // Convert uint256 to string
-        uint256 advertismentId = abi.decode(performData, (uint256));
-        string memory advertismentIdString = Strings.toString(advertismentId);
+        uint256 advertisementId = abi.decode(performData, (uint256));
+        string memory advertisementIdString = Strings.toString(advertisementId);
         string[] memory args = new string[](1);
-        args[0] = advertismentIdString;
+        args[0] = advertisementIdString;
 
         clickCountFunction.sendRequest(
             ENCRYPTED_SECRETS_URLS,

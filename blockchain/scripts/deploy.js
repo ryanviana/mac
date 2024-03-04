@@ -20,13 +20,13 @@ async function main() {
   const tokenAddress = Token.target;
   console.log("Token deployed to:", tokenAddress);
 
-  const Advertisment = await ethers.deployContract("AdvertismentContract");
-  await Advertisment.waitForDeployment();
-  const advertismentAddress = Advertisment.target;
-  console.log("Advertisment deployed to:", advertismentAddress);
+  const Advertisement = await ethers.deployContract("AdvertisementContract");
+  await Advertisement.waitForDeployment();
+  const advertisementAddress = Advertisement.target;
+  console.log("Advertisement deployed to:", advertisementAddress);
 
   const Payment = await ethers.deployContract("PaymentContract", [
-    advertismentAddress,
+    advertisementAddress,
   ]);
   await Payment.waitForDeployment();
   const paymentAddress = Payment.target;
@@ -34,7 +34,7 @@ async function main() {
 
   const ClickCountOracle = await ethers.deployContract("ClickCountFunction", [
     router,
-    advertismentAddress,
+    advertisementAddress,
     source,
   ]);
   await ClickCountOracle.waitForDeployment();
@@ -49,14 +49,14 @@ async function main() {
 
   const MilestoneKeeper = await ethers.deployContract(
     "MilestonePaymentKeeper",
-    [paymentAddress, advertismentAddress]
+    [paymentAddress, advertisementAddress]
   );
   await MilestoneKeeper.waitForDeployment();
   const milestoneAddress = MilestoneKeeper.target;
   console.log("MilestoneKeeper deployed to:", milestoneAddress);
 
   const MACPlatformManager = await ethers.deployContract("MacMain", [
-    advertismentAddress,
+    advertisementAddress,
     paymentAddress,
     accessControlAddress,
   ]);

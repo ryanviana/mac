@@ -2,7 +2,7 @@
 pragma solidity ^0.8.7;
 
 import "../interfaces/IPayment.sol";
-import "../interfaces/IAdvertisment.sol";
+import "../interfaces/IAdvertisement.sol";
 
 struct Log {
     uint256 index; // Index of the log in the block
@@ -26,34 +26,36 @@ interface ILogAutomation {
 
 contract MilestonePaymentKeeper is ILogAutomation {
     IPayment public paymentContract;
-    IAdvertisment public advertismentContract;
+    IAdvertisement public advertisementContract;
 
     uint256 public counted = 0;
 
     constructor(
         address _paymentContractAddress,
-        address _advertismentContractAddress
+        address _advertisementContractAddress
     ) {
         paymentContract = IPayment(_paymentContractAddress);
-        advertismentContract = IAdvertisment(_advertismentContractAddress);
+        advertisementContract = IAdvertisement(_advertisementContractAddress);
     }
     function checkLog(
         Log calldata log,
         bytes memory
     ) external pure returns (bool upkeepNeeded, bytes memory performData) {
         upkeepNeeded = true;
-        uint256 advertismentId = bytes32ToUint256(log.topics[1]);
-        performData = abi.encode(advertismentId);
+        uint256 advertisementId = bytes32ToUint256(log.topics[1]);
+        performData = abi.encode(advertisementId);
     }
 
     function performUpkeep(bytes calldata performData) external override {
-        uint256 advertismentId = abi.decode(performData, (uint256));
-        IAdvertisment.Advertisment memory advertisment = advertismentContract
-            .getAdvertisment(advertismentId);
+        uint256 advertisementId = abi.decode(performData, (uint256));
+        IAdvertisement.Advertisement
+            memory advertisement = advertisementContract.getAdvertisement(
+                advertisementId
+            );
         paymentContract.createPayment(
-            advertisment.creator,
-            advertisment.amountToBePaid,
-            advertisment.token
+            advertisement.creator,
+            advertisement.amountToBePaid,
+            advertisement.token
         );
     }
 
