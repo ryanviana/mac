@@ -31,28 +31,22 @@ Ever wondered how the MAC platform can transform the advertising world? Dive dee
 
 ### Main Contracts
 
-- **MACPlatformManager**: [`0xCD1078a1F6C5ac82BB7eF6ABAb8BD69c581F93bE`](https://subnets-test.avax.network/c-chain/address/0x07c420C56BaeFc7cD6c4828d58d68e6ba23B1d28)
+- **MACPlatformManager**: [`0x9De18629eB219Cd822ACa8e8c4281F51f0BdDbDC`](https://testnet.bscscan.com/address/0x9De18629eB219Cd822ACa8e8c4281F51f0BdDbDC)
   - Manages all MAC Operations.
-- **Advertisement**: [`0x4348Ce4487dAbEFF94d463cf0ea855DF8c23B360`](https://subnets-test.avax.network/c-chain/address/0x4348Ce4487dAbEFF94d463cf0ea855DF8c23B360)
+- **Advertisement**: [`0x075b2D6ce53154148F3C5e990bE9b4856bE3B610`](https://testnet.bscscan.com/address/0x075b2D6ce53154148F3C5e990bE9b4856bE3B610)
   - Stores and manages advertisement information.
-- **Payment**: [`0xD4Ac9Ed02e0EDb4a7738BC3e0F3e36EcD47D11C8`](https://subnets-test.avax.network/c-chain/address/0xD4Ac9Ed02e0EDb4a7738BC3e0F3e36EcD47D11C8)
+- **Payment**: [`0x22bFAB5274409bEc3F065da33b4260DD36E8cf7C`](https://testnet.bscscan.com/address/0x22bFAB5274409bEc3F065da33b4260DD36E8cf7C)
   - Handles creation and execution of payments using ERC-20 tokens.
-- **AccessControl**: [`0x625Ff644c4f99C8d859532117bdb6142cCC43EF2`](https://subnets-test.avax.network/c-chain/address/0x625Ff644c4f99C8d859532117bdb6142cCC43EF2)
+- **AccessControl**: [`0x3ca34895dBeD1CDBcC86a6Ce234CBC79dB140fb8`](https://testnet.bscscan.com/address/0x3ca34895dBeD1CDBcC86a6Ce234CBC79dB140fb8)
   - Manages access control within the MAC context.
-- **ClickCountFunction**: [`0x40d0F2e0d93d519FBF71A9b0c89D92ce6CB2Efdf`](https://subnets-test.avax.network/c-chain/address/0x40d0F2e0d93d519FBF71A9b0c89D92ce6CB2Efdf)
+- **ClickCountFunction**: waiting feature to be avaialable on BNB Smart Chain, but already developed and tested in other chains.
   - Chainlink function for tracking advertisement clicks.
-- **ActiveAdsKeeper**: [`0x41E933DF2ca46B97A0731292A3Ff24bF3707A66f`](https://subnets-test.avax.network/c-chain/address/0x41E933DF2ca46B97A0731292A3Ff24bF3707A66f)
+- **ActiveAdsKeeper**: waiting feature to be avaialable on BNB Smart Chain, but already developed and tested in other chains.
   - Chainlink keeper for active advertisements, updating click counts and milestones.
-- **MilestoneKeeper**: [`0xce22d0e8027C4604d468B94656530bf50825A059`](https://subnets-test.avax.network/c-chain/address/0xce22d0e8027C4604d468B94656530bf50825A059)
+- **MilestoneKeeper**: waiting feature to be avaialable on BNB Smart Chain, but already developed and tested in other chains.
   - Manages milestones and executes payments based on Chainlink logs.
-- **Token**: [`0xC070394CBB261eA11a0A82AC552b581f6EDbB039`](https://subnets-test.avax.network/c-chain/address/0xC070394CBB261eA11a0A82AC552b581f6EDbB039)
+- **Token**: [`0xD5C07768c7F387Aa5500d22ADD67715083fFA739`](https://testnet.bscscan.com/address/0xD5C07768c7F387Aa5500d22ADD67715083fFA739)
   - Used to mint tokens for your wallet and test our solution.
-
-### Chainlink Keepers
-
-- [Daily Active Ads Keeper](https://automation.chain.link/fuji/3646668707667596729200555341527389313365931653295780104494029805417725006916)
-- [Update Active ADS Keeper](https://automation.chain.link/fuji/0x1a987bcf208d324bf59313750283de87cc4f1e723adbb3b7e8f1874c9b52467d)
-- [Milestone Reached Payment Keeper](https://automation.chain.link/fuji/0xdd203a4a37cbe5d1ec7671c1a8e2df628aa6cee30bcbc780cfdfb5caf1603a78)
 
 ## 🌍 Particle Connect
 
