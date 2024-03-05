@@ -37,7 +37,7 @@ const LoginPage: NextPage = () => {
     const walletKey = process.env.NEXT_PUBLIC_ADMIN_KEY; // Nunca exponha sua chave privada em código de produção
 
     const provider = new ethers.providers.JsonRpcProvider(
-      "https://avalanche-fuji.infura.io/v3/84ad611c167b499ead05e7794fbd84a8",
+      "wss://bsc-testnet-rpc.publicnode.com	",
     );
     const wallet = new ethers.Wallet(walletKey!, provider);
 
@@ -108,7 +108,7 @@ const LoginPage: NextPage = () => {
     const walletKey = process.env.NEXT_PUBLIC_ADMIN_KEY; // Nunca exponha sua chave privada em código de produção
 
     const provider = new ethers.providers.JsonRpcProvider(
-      "https://avalanche-fuji.infura.io/v3/84ad611c167b499ead05e7794fbd84a8",
+      "wss://bsc-testnet-rpc.publicnode.com",
     );
     const wallet = new ethers.Wallet(walletKey!, provider);
 

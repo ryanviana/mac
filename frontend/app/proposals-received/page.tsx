@@ -9,6 +9,7 @@ import { ethers } from "ethers";
 import type { NextPage } from "next";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { useUser } from "~~/context/globalState";
+import "dotenv/config";
 
 interface Campaign {
   _id: string;
@@ -128,11 +129,11 @@ const ProposalsReceived: NextPage = () => {
     const signer = customProvider.getSigner();
 
     const MacMainABI = MacMainJSON.abi;
-    const MacMainAddress = "0x07c420C56BaeFc7cD6c4828d58d68e6ba23B1d28";
+    const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
 
-    const MacMainContract = new ethers.Contract(MacMainAddress, MacMainABI, signer);
+    const MacMainContract = new ethers.Contract(MacMainAddress!, MacMainABI, signer);
 
-    const transaction = await MacMainContract.acceptAdvertisment(3); // TODO: Index logic here
+    const transaction = await MacMainContract.acceptAdvertisement(3); //TAKEALOOK - Index
 
     await transaction.wait();
 
@@ -174,11 +175,11 @@ const ProposalsReceived: NextPage = () => {
       const signer = customProvider.getSigner();
 
       const MacMainABI = MacMainJSON.abi;
-      const MacMainAddress = "0x07c420C56BaeFc7cD6c4828d58d68e6ba23B1d28";
+      const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
 
-      const MacMainContract = new ethers.Contract(MacMainAddress, MacMainABI, signer);
+      const MacMainContract = new ethers.Contract(MacMainAddress!, MacMainABI, signer);
 
-      const transaction = await MacMainContract.rejectAdvertisment(4); // TODO: Index logic here
+      const transaction = await MacMainContract.rejectAdvertisement(4); //TAKEALOOK - Index
 
       await transaction.wait();
     }

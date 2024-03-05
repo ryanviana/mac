@@ -199,9 +199,11 @@ const Home: NextPage = () => {
 
     const MacMainABI = MacMainJSON.abi;
 
+
     const MacMainContract = new ethers.Contract(process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS!, MacMainABI, signer);
 
-    const transaction = await MacMainContract.createAdvertisment(
+    const transaction = await MacMainContract.createAdvertisement(
+      789,
       CREATOR_ADDRESS,
       totalDollarsBlockchainAmount,
       TOKEN_ADDRESS,
