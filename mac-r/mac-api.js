@@ -1,4 +1,4 @@
-const base = "https://backend-mac.vercel.app";
+const base = "https://prisma-tech-mac-backend.vercel.app";
 const clicksApi = base + "/clicks";
 const referencesApi = base + "/references";
 const referenceRegister = base + "/references/get-id-by-reference/";
@@ -6,6 +6,7 @@ const referenceRegister = base + "/references/get-id-by-reference/";
 async function getReferenceByReference(reference) {
   if (reference === "/undefined") return;
 
+  console.log("reference:", referenceRegister + reference);
   try {
     const response = await fetch(referenceRegister + reference, {
       method: "GET",
@@ -19,7 +20,7 @@ async function getReferenceByReference(reference) {
     }
 
     const result = response.json();
-    console.log("Success:", result);
+    console.log("Success backend query:", result);
     return result;
   } catch (error) {
     console.error("Error:", error);

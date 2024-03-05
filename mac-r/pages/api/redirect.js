@@ -6,8 +6,10 @@ import {
 } from "@/mac-api";
 
 export default async function handler(req, res) {
+  console.log("here");
   const { reference } = req.query;
-  if (reference) {
+  console.log("reference:", reference);
+  if (reference != undefined) {
     const referenceRegister = await getReferenceByReference(reference);
     console.log("referenceRegister:", referenceRegister);
     const link = await getLinkByReference("/" + reference);
