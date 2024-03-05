@@ -8,10 +8,10 @@ MAC is a decentralized marketplace designed for Advertisers and Creators to come
 
 ### Features
 
-- **MAC Platform**: A marketplace for advertisers and creators to interact and forge meaningful deals. Explore it [here](https://avalanche-mac.vercel.app/). **Just don't forget to mint tokens to your wallet, the contract address is just below**!
-- **MAC-R Service**: Our proprietary service for creating custom & trackable advertisements. Try our [test custom url](https://avalanche-mac-url.vercel.app/test) which redirects to Google.
+- **MAC Platform**: A marketplace for advertisers and creators to interact and forge meaningful deals. Explore it [here](https://prisma-tech-mac.vercel.app/). **Just don't forget to mint tokens to your wallet, the contract address is just below**!
+- **MAC-R Service**: Our proprietary service for creating custom & trackable advertisements. Try our [test custom url](https://prisma-tech-mac-r.vercel.app/test) which redirects to Google.
 - **Comprehensive Backend**: A fully deployed, [documented](https://prisma-tech-mac-backend.vercel.app/swagger) (Swagger) backend application that supports the MAC platform.
-- **Avalanche Blockchain**: Ensuring decentralized operation with automated daily payments and reliable campaign management.
+- **BNB Blockchain**: Ensuring decentralized operation with automated daily payments and reliable campaign management.
 
 ## 📹 Dive into MAC: Our Exciting Pitch Presentation! 🌟
 
@@ -21,7 +21,7 @@ Ever wondered how the MAC platform can transform the advertising world? Dive dee
 
 👉 [Check MAC's slideshow presentation!](https://www.canva.com/design/DAF9ivFcW38/uxTvzCmQmfAECCjMqo2lug/view?utm_content=DAF9ivFcW38&utm_campaign=share_your_design&utm_medium=link&utm_source=shareyourdesignpanel)
 
-## 🚀 Smart Contracts on Avalanche Blockchain
+## 🚀 Smart Contracts on BNB Blockchain
 
 ### Architecture
 
@@ -64,11 +64,11 @@ Particle Connect allows seamless onboarding into our Web3 application, offering 
 
 (Just don't forget to mint tokens to your wallet, the contract address is just above!)
 
-https://avalanche-mac.vercel.app/
+https://prisma-tech-mac.vercel.app/
 
 #### MAC-R
 
-https://avalanche-mac-url.vercel.app/test
+https://prisma-tech-mac-r.vercel.app/test
 
 #### SWAGGER
 
