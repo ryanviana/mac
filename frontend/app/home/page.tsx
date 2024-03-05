@@ -7,7 +7,6 @@ import { ExternalProvider, JsonRpcFetchFunc } from "@ethersproject/providers";
 import { useConnectKit, useParticleProvider } from "@particle-network/connect-react-ui";
 import { ethers } from "ethers";
 import type { NextPage } from "next";
-import { hexToNumber } from "viem";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { useUser } from "~~/context/globalState";
 
@@ -33,7 +32,7 @@ const Home: NextPage = () => {
   const [visibleDropdown, setVisibleDropdown] = useState<number | null>(null);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
+
   const [formValues, setFormValues] = useState({
     description: "",
     milestone: "",
@@ -43,10 +42,6 @@ const Home: NextPage = () => {
     parameter: "",
   });
 
-  // const { provider } = useUser(); // Call useUser at the top level
-  // const { account, particleProvider } = useAccountInfo();
-  // const { disconnect } = useParticleConnect();
-  // const [address, setAddress] = useState();
   const TOKEN_ADDRESS = "0xC070394CBB261eA11a0A82AC552b581f6EDbB039";
   const CREATOR_ADDRESS = "0xdbA1F60551E6f3CF567aB2cb930517870aCbaD75";
 
@@ -69,8 +64,8 @@ const Home: NextPage = () => {
       CPM,
       anunciante,
       criadorConteudo,
-      status: "pending", // Assuming this is always "pending" initially
-      concluido: false, // Assuming this is always "false" initially
+      status: "pending",
+      concluido: false,
       linkParametrizado,
       totalAmount,
       advertiserWalletAddress,
@@ -114,7 +109,6 @@ const Home: NextPage = () => {
     // Separate useEffect for handling connection status
     const updateConnectionStatus = () => {
       const userInfo = connectKit.particle.auth.getUserInfo();
-      setIsConnected(!!userInfo); // Cast userInfo presence to a boolean
       if (userInfo) {
         console.log("User is connected:", userInfo);
       }
@@ -156,30 +150,30 @@ const Home: NextPage = () => {
     }
   }
 
-  async function checkAdvertiser(companyEmail: string) {
-    try {
-      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/announcers", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  // async function checkAdvertiser(companyEmail: string) {
+  //   try {
+  //     const response = await fetch("https://prisma-tech-mac-backend.vercel.app/announcers", {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
-      const advertisers = await response.json();
-      const filteredAdvertisers = advertisers.filter(
-        (advertiser: { email: string }) => advertiser.email === companyEmail,
-      );
+  //     const advertisers = await response.json();
+  //     const filteredAdvertisers = advertisers.filter(
+  //       (advertiser: { email: string }) => advertiser.email === companyEmail,
+  //     );
 
-      if (filteredAdvertisers.length > 0) {
-        console.log("Advertiser found:", filteredAdvertisers[0]);
-        return filteredAdvertisers[0];
-      } else {
-        console.log("No advertiser found with that email.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
+  //     if (filteredAdvertisers.length > 0) {
+  //       console.log("Advertiser found:", filteredAdvertisers[0]);
+  //       return filteredAdvertisers[0];
+  //     } else {
+  //       console.log("No advertiser found with that email.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, creator: Creator) => {
     e.preventDefault();
@@ -231,7 +225,7 @@ const Home: NextPage = () => {
 
       const MacMainABI = MacMainJSON.abi;
 
-      const MacMainContract = new ethers.Contract(process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS!, MacMainABI, signer);
+      const MacMainContract = new ethers.Contract(process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS, MacMainABI, signer);
 
       const transaction = await MacMainContract.createAdvertisement(
         blockchainAdsId,
@@ -242,11 +236,6 @@ const Home: NextPage = () => {
         cpmBlockchainAmount,
       );
       await transaction.wait();
-      let proposalId = 0;
-
-      MacMainContract.on("ReturnId", id => {
-        proposalId = hexToNumber(id);
-      });
 
       setIsFormSubmitted(true);
     } catch (error) {

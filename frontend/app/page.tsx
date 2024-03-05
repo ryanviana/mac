@@ -35,14 +35,23 @@ const LoginPage: NextPage = () => {
     });
 
     const walletKey = process.env.NEXT_PUBLIC_ADMIN_KEY;
+    if (!walletKey) {
+      console.error("ADMIN_KEY is not defined in environment variables.");
+      return; // Or handle this scenario appropriately
+    }
 
     const provider = new ethers.providers.JsonRpcProvider("wss://bsc-testnet-rpc.publicnode.com	");
-    const wallet = new ethers.Wallet(walletKey!, provider);
+    const wallet = new ethers.Wallet(walletKey, provider);
 
     const MacMainABI = MacMainJSON.abi;
-    const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
 
-    const MacMainContract = new ethers.Contract(MacMainAddress!, MacMainABI, wallet);
+    const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
+    if (!MacMainAddress) {
+      console.error("MAC_MAIN_ADDRESS is not defined in environment variables.");
+      return; // Or handle this scenario appropriately
+    }
+
+    const MacMainContract = new ethers.Contract(MacMainAddress, MacMainABI, wallet);
     const transaction = await MacMainContract.grantCreatorRole(walletAddress);
 
     await transaction.wait();
@@ -102,15 +111,24 @@ const LoginPage: NextPage = () => {
       walletAddress: walletAddress,
     });
 
-    const walletKey = process.env.NEXT_PUBLIC_ADMIN_KEY; // Nunca exponha sua chave privada em código de produção
+    const walletKey = process.env.NEXT_PUBLIC_ADMIN_KEY;
+    if (!walletKey) {
+      console.error("ADMIN_KEY is not defined in environment variables.");
+      return; // Or handle this scenario appropriately
+    }
 
     const provider = new ethers.providers.JsonRpcProvider("wss://bsc-testnet-rpc.publicnode.com");
-    const wallet = new ethers.Wallet(walletKey!, provider);
+    const wallet = new ethers.Wallet(walletKey, provider);
 
     const MacMainABI = MacMainJSON.abi;
-    const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
 
-    const MacMainContract = new ethers.Contract(MacMainAddress!, MacMainABI, wallet);
+    const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
+    if (!MacMainAddress) {
+      console.error("MAC_MAIN_ADDRESS is not defined in environment variables.");
+      return; // Or handle this scenario appropriately
+    }
+
+    const MacMainContract = new ethers.Contract(MacMainAddress, MacMainABI, wallet);
     const transaction = await MacMainContract.grantAdvertiserRole(walletAddress);
 
     await transaction.wait();

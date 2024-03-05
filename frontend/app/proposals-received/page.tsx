@@ -133,9 +133,14 @@ const ProposalsReceived: NextPage = () => {
     const signer = customProvider.getSigner();
 
     const MacMainABI = MacMainJSON.abi;
-    const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
 
-    const MacMainContract = new ethers.Contract(MacMainAddress!, MacMainABI, signer);
+    const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
+    if (!MacMainAddress) {
+      console.error("MAC_MAIN_ADDRESS is not defined in environment variables.");
+      return; // Or handle this scenario appropriately
+    }
+
+    const MacMainContract = new ethers.Contract(MacMainAddress, MacMainABI, signer);
 
     const transaction = await MacMainContract.acceptAdvertisement(blockchainAdsId);
 
@@ -180,8 +185,12 @@ const ProposalsReceived: NextPage = () => {
 
       const MacMainABI = MacMainJSON.abi;
       const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
+      if (!MacMainAddress) {
+        console.error("MAC_MAIN_ADDRESS is not defined in environment variables.");
+        return; // Or handle this scenario appropriately
+      }
 
-      const MacMainContract = new ethers.Contract(MacMainAddress!, MacMainABI, signer);
+      const MacMainContract = new ethers.Contract(MacMainAddress, MacMainABI, signer);
 
       const transaction = await MacMainContract.rejectAdvertisement(blockchainAdsId);
 
