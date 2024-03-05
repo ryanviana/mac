@@ -16,6 +16,7 @@ const LoginPage: NextPage = () => {
   const [isNewProfile, setIsNewProfile] = useState(false);
   const { setUser } = useUser();
   const connectKit = useConnectKit();
+  const [isLoading, setIsLoading] = useState(false);
   // const ParticleProvider = useParticleProvider();
 
   const router = useRouter();
@@ -182,6 +183,8 @@ const LoginPage: NextPage = () => {
 
   const handleConnect = async () => {
     try {
+      setIsLoading(true); // Set loading to true when connection starts
+
       let foundUser;
 
       const userInfo = connectKit.particle.auth.getUserInfo();
@@ -206,6 +209,7 @@ const LoginPage: NextPage = () => {
       } else {
         throw new Error("Invalid user type");
       }
+
       if (foundUser) {
         setUser({ id: foundUser._id, type: selectedType, email: foundUser.email }); // Update global user state
       }
@@ -232,8 +236,11 @@ const LoginPage: NextPage = () => {
       } else {
         router.push("/home");
       }
+
+      setIsLoading(false);
     } catch (error) {
       console.error("An error occurred during the login process: ", error);
+      setIsLoading(false);
     }
   };
 
@@ -268,10 +275,13 @@ const LoginPage: NextPage = () => {
           </h2>
           <ConnectButton />
           <button
-            className="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className={`mt-4 ${
+              isLoading ? "bg-gray-400" : "bg-green-500 hover:bg-green-700"
+            } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
             onClick={handleConnect}
+            disabled={isLoading}
           >
-            Enter
+            {isLoading ? "Loading..." : "Enter"}
           </button>
         </div>
       </div>
