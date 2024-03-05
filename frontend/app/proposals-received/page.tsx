@@ -5,6 +5,7 @@ import Link from "next/link";
 import MacMainJSON from "../../abis/MacMain.json";
 import { ExternalProvider, JsonRpcFetchFunc } from "@ethersproject/providers";
 import { useParticleProvider } from "@particle-network/connect-react-ui";
+import "dotenv/config";
 import { ethers } from "ethers";
 import type { NextPage } from "next";
 import { StarIcon } from "@heroicons/react/24/solid";
@@ -20,6 +21,7 @@ interface Campaign {
   descricao: string;
   concluido: boolean;
   token: string;
+  blockchainAdsId: string;
 }
 
 interface Advertiser {
@@ -44,7 +46,7 @@ const ProposalsReceived: NextPage = () => {
 
   async function getCampaignsByCreator(creatorEmail: string) {
     try {
-      const response = await fetch("https://backend-mac.vercel.app/announcements", {
+      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/announcements", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -76,12 +78,15 @@ const ProposalsReceived: NextPage = () => {
 
   async function checkAdvertiser(email: string): Promise<Advertiser | null> {
     try {
-      const response = await fetch(`https://backend-mac.vercel.app/announcers?email=${encodeURIComponent(email)}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `https://prisma-tech-mac-backend.vercel.app/announcers?email=${encodeURIComponent(email)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       const announcers = await response.json();
       const filteredAnnouncers = announcers
@@ -122,23 +127,23 @@ const ProposalsReceived: NextPage = () => {
     setExpandedProposals({ ...expandedProposals, [email]: !expandedProposals[email] });
   };
 
-  const handleAcceptProposal = async (campaignId: string) => {
+  const handleAcceptProposal = async (campaignId: string, blockchainAdsId: string) => {
     const customProvider = new ethers.providers.Web3Provider(ParticleProvider as ExternalProvider | JsonRpcFetchFunc);
 
     const signer = customProvider.getSigner();
 
     const MacMainABI = MacMainJSON.abi;
-    const MacMainAddress = "0x07c420C56BaeFc7cD6c4828d58d68e6ba23B1d28";
+    const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
 
-    const MacMainContract = new ethers.Contract(MacMainAddress, MacMainABI, signer);
+    const MacMainContract = new ethers.Contract(MacMainAddress!, MacMainABI, signer);
 
-    const transaction = await MacMainContract.acceptAdvertisment(3); // TODO: Index logic here
+    const transaction = await MacMainContract.acceptAdvertisement(blockchainAdsId);
 
     await transaction.wait();
 
     try {
       // Send a PATCH request to update the campaign
-      const response = await fetch(`https://backend-mac.vercel.app/announcements/${campaignId}`, {
+      const response = await fetch(`https://prisma-tech-mac-backend.vercel.app/announcements/${campaignId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -167,25 +172,25 @@ const ProposalsReceived: NextPage = () => {
     }
   };
 
-  const handleDenyProposal = async (campaignId: string) => {
+  const handleDenyProposal = async (campaignId: string, blockchainAdsId: string) => {
     if (ParticleProvider) {
       const customProvider = new ethers.providers.Web3Provider(ParticleProvider as ExternalProvider | JsonRpcFetchFunc);
 
       const signer = customProvider.getSigner();
 
       const MacMainABI = MacMainJSON.abi;
-      const MacMainAddress = "0x07c420C56BaeFc7cD6c4828d58d68e6ba23B1d28";
+      const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
 
-      const MacMainContract = new ethers.Contract(MacMainAddress, MacMainABI, signer);
+      const MacMainContract = new ethers.Contract(MacMainAddress!, MacMainABI, signer);
 
-      const transaction = await MacMainContract.rejectAdvertisment(4); // TODO: Index logic here
+      const transaction = await MacMainContract.rejectAdvertisement(blockchainAdsId);
 
       await transaction.wait();
     }
 
     try {
       // Send a PATCH request to update the campaign
-      const response = await fetch(`https://backend-mac.vercel.app/announcements/${campaignId}`, {
+      const response = await fetch(`https://prisma-tech-mac-backend.vercel.app/announcements/${campaignId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -227,12 +232,15 @@ const ProposalsReceived: NextPage = () => {
         return "Error"; // Or any other error handling
       }
 
-      const response = await fetch(`https://backend-mac.vercel.app/clicks?reference=${encodeURIComponent(reference)}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `https://prisma-tech-mac-backend.vercel.app/clicks?reference=${encodeURIComponent(reference)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       const data = await response.json();
       const count = data.length;
@@ -371,13 +379,13 @@ const ProposalsReceived: NextPage = () => {
 
                       <button
                         className="bg-green-500 hover:bg-green-700 text-white font-semibold py-1 px-3 rounded shadow-md"
-                        onClick={() => handleAcceptProposal(campaign._id)}
+                        onClick={() => handleAcceptProposal(campaign._id, campaign.blockchainAdsId)}
                       >
                         Accept proposal
                       </button>
                       <button
                         className="bg-red-500 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded shadow-md"
-                        onClick={() => handleDenyProposal(campaign._id)}
+                        onClick={() => handleDenyProposal(campaign._id, campaign.blockchainAdsId)}
                       >
                         Deny proposal
                       </button>

@@ -1,5 +1,5 @@
 const proposalId = 1;
-const URL = `https://backend-mac.vercel.app/clicks/count/${proposalId}`;
+const URL = `https://prisma-tech-mac-backend.vercel.app/clicks/count/${proposalId}`;
 
 let response = await Functions.makeHttpRequest({ url: URL });
 

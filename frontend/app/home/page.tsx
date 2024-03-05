@@ -29,9 +29,11 @@ const Home: NextPage = () => {
   const [creators, setCreators] = useState<Creator[]>([]);
   const { user } = useUser();
   const ParticleProvider = useParticleProvider();
+  const connectKit = useConnectKit();
   const [visibleDropdown, setVisibleDropdown] = useState<number | null>(null);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   const [formValues, setFormValues] = useState({
     description: "",
     milestone: "",
@@ -48,10 +50,6 @@ const Home: NextPage = () => {
   const TOKEN_ADDRESS = "0xC070394CBB261eA11a0A82AC552b581f6EDbB039";
   const CREATOR_ADDRESS = "0xdbA1F60551E6f3CF567aB2cb930517870aCbaD75";
 
-  const connectKit = useConnectKit();
-  const [isConnected, setIsConnected] = useState(false);
-  console.log(isConnected);
-
   async function createCampaign(
     descricao: string,
     token: string,
@@ -63,7 +61,6 @@ const Home: NextPage = () => {
     totalAmount: number,
     advertiserWalletAddress: string,
     creatorWalletAddress: string,
-    proposalId: string,
   ) {
     const body = JSON.stringify({
       descricao,
@@ -75,14 +72,13 @@ const Home: NextPage = () => {
       status: "pending", // Assuming this is always "pending" initially
       concluido: false, // Assuming this is always "false" initially
       linkParametrizado,
-      proposalId, // Placeholder value
       totalAmount,
       advertiserWalletAddress,
       creatorWalletAddress,
     });
 
     try {
-      const response = await fetch("https://backend-mac.vercel.app/announcements", {
+      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/announcements", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -92,7 +88,7 @@ const Home: NextPage = () => {
 
       const data = await response.json();
       console.log("Campaign created:", data);
-      return data._id;
+      return data.blockchainAdsId;
     } catch (error) {
       console.error("Error creating campaign:", error);
     }
@@ -102,9 +98,8 @@ const Home: NextPage = () => {
     // Function to fetch creators from the backend
     const fetchCreators = async () => {
       setIsLoading(true);
-
       try {
-        const response = await fetch("https://backend-mac.vercel.app/creators");
+        const response = await fetch("https://prisma-tech-mac-backend.vercel.app/creators");
         const data = await response.json();
         setCreators(data); // Update state with fetched creators
       } catch (error) {
@@ -114,14 +109,23 @@ const Home: NextPage = () => {
       }
     };
 
-    // Check if the user is connected and update the state
-    const userInfo = connectKit.particle.auth.getUserInfo();
-    if (userInfo) {
-      setIsConnected(true);
-      console.log("User is connected:", userInfo);
-    }
-
     fetchCreators();
+
+    // Separate useEffect for handling connection status
+    const updateConnectionStatus = () => {
+      const userInfo = connectKit.particle.auth.getUserInfo();
+      setIsConnected(!!userInfo); // Cast userInfo presence to a boolean
+      if (userInfo) {
+        console.log("User is connected:", userInfo);
+      }
+    };
+
+    // Call it initially
+    updateConnectionStatus();
+
+    // Assuming connectKit or its method might change, which is typically unlikely,
+    // you can add them to the dependency array to ensure the effect runs again if they do.
+    // If connectKit is stable and doesn't change, this effect only runs on mount.
   }, [connectKit]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
@@ -137,7 +141,7 @@ const Home: NextPage = () => {
     });
 
     try {
-      const response = await fetch("https://backend-mac.vercel.app/references", {
+      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/references", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -154,7 +158,7 @@ const Home: NextPage = () => {
 
   async function checkAdvertiser(companyEmail: string) {
     try {
-      const response = await fetch("https://backend-mac.vercel.app/announcers", {
+      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/announcers", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -179,48 +183,27 @@ const Home: NextPage = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, creator: Creator) => {
     e.preventDefault();
-    const anunciante = user.email; // Assuming the user's email is the advertiser's name
 
-    const cpmBlockchainAmount = Math.round(parseFloat(formValues.cpm) * 100);
-    const totalDollarsBlockchainAmount = Math.round(parseFloat(formValues.totalDollars) * 100);
-    const advertisementMilestone = formValues.milestone;
+    // Ensure the contract address is defined
+    if (!process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS) {
+      console.error("Contract address is undefined. Make sure NEXT_PUBLIC_MAC_MAIN_ADDRESS is set.");
+      return;
+    }
 
-    const customProvider = new ethers.providers.Web3Provider(ParticleProvider as ExternalProvider | JsonRpcFetchFunc);
-    const signer = customProvider.getSigner();
+    const anunciante = user.email;
+    const userAddress = connectKit.particle.auth.getUserInfo()?.wallets[0].public_address;
 
-    // const TokenABI = TokenJSON.abi;
+    // Check if userAddress is undefined and handle the case appropriately
+    if (!userAddress) {
+      console.error("User address is undefined. User might not be connected.");
+      return;
+    }
 
-    // const TokenContract = new ethers.Contract(TOKEN_ADDRESS, TokenABI, signer);
-    // const tokenTransaction = await TokenContract.transfer(
-    //   process.env.NEXT_PUBLIC_PAYMENT_CONTRACT,
-    //   totalDollarsBlockchainAmount
-    // );
-    // await tokenTransaction.wait();
-
-    const MacMainABI = MacMainJSON.abi;
-
-    const MacMainContract = new ethers.Contract(process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS!, MacMainABI, signer);
-
-    const transaction = await MacMainContract.createAdvertisment(
-      CREATOR_ADDRESS,
-      totalDollarsBlockchainAmount,
-      TOKEN_ADDRESS,
-      advertisementMilestone,
-      cpmBlockchainAmount,
-    );
-    await transaction.wait();
-    let proposalId = 0;
-
-    MacMainContract.on("ReturnId", id => {
-      proposalId = hexToNumber(id);
-    });
-
-    const linkParametrizado = `https://mac-url.vercel.app/${formValues.parameter}`;
+    const linkParametrizado = `https://prisma-tech-mac-r.vercel.app/${formValues.parameter}`;
+    console.log("Link parametrizado:", linkParametrizado);
 
     try {
-      const advertiserData = await checkAdvertiser(anunciante);
-
-      const idCampanha = await createCampaign(
+      const blockchainAdsId = await createCampaign(
         formValues.description,
         creator.paymentToken,
         parseInt(formValues.milestone),
@@ -229,18 +212,43 @@ const Home: NextPage = () => {
         creator.email,
         linkParametrizado,
         parseInt(formValues.totalDollars),
-        advertiserData.walletAddress,
+        userAddress, // Now guaranteed to be a string
         creator.walletAddress,
-        proposalId.toString(),
       );
 
       console.log("Form submitted with values:", formValues);
-      console.log("Created campaign id:", idCampanha);
+      console.log("Created campaign id:", blockchainAdsId);
 
       const reference = "/" + formValues.parameter;
-      createReference(formValues.link, reference, idCampanha);
+      await createReference(formValues.link, reference, blockchainAdsId);
 
-      setIsFormSubmitted(true); // Set the form submission status to true
+      const cpmBlockchainAmount = Math.round(parseFloat(formValues.cpm) * 100);
+      const totalDollarsBlockchainAmount = Math.round(parseFloat(formValues.totalDollars) * 100);
+      const advertisementMilestone = formValues.milestone;
+
+      const customProvider = new ethers.providers.Web3Provider(ParticleProvider as ExternalProvider | JsonRpcFetchFunc);
+      const signer = customProvider.getSigner();
+
+      const MacMainABI = MacMainJSON.abi;
+
+      const MacMainContract = new ethers.Contract(process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS!, MacMainABI, signer);
+
+      const transaction = await MacMainContract.createAdvertisement(
+        blockchainAdsId,
+        CREATOR_ADDRESS,
+        totalDollarsBlockchainAmount,
+        TOKEN_ADDRESS,
+        advertisementMilestone,
+        cpmBlockchainAmount,
+      );
+      await transaction.wait();
+      let proposalId = 0;
+
+      MacMainContract.on("ReturnId", id => {
+        proposalId = hexToNumber(id);
+      });
+
+      setIsFormSubmitted(true);
     } catch (error) {
       console.error("Error creating campaign:", error);
     }

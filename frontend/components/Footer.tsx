@@ -13,7 +13,7 @@ export const Footer = () => {
             </div>
             <span>·</span>
             <div className="flex justify-center items-center gap-2">
-              <p className="m-0 text-center">A project by RGB Group</p>
+              <p className="m-0 text-center">A project by Prisma Tech</p>
             </div>
             <span>·</span>
             <div className="text-center">
