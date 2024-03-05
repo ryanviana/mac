@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import MacMainJSON from "../abis/MacMain.json";
+import AccessControlJSON from "../abis/AccessControl.json";
 import { ConnectButton, useConnectKit } from "@particle-network/connect-react-ui";
 import "@particle-network/connect-react-ui/dist/index.css";
 import "dotenv/config";
@@ -41,19 +42,19 @@ const LoginPage: NextPage = () => {
       return; // Or handle this scenario appropriately
     }
 
-    const provider = new ethers.providers.JsonRpcProvider("wss://bsc-testnet-rpc.publicnode.com	");
+    const provider = new ethers.providers.JsonRpcProvider("https://97.rpc.thirdweb.com");
     const wallet = new ethers.Wallet(walletKey, provider);
 
-    const MacMainABI = MacMainJSON.abi;
+    const AccessControlABI = AccessControlJSON.abi;
 
-    const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
-    if (!MacMainAddress) {
-      console.error("MAC_MAIN_ADDRESS is not defined in environment variables.");
+    const AccessControlAddress = process.env.NEXT_PUBLIC_ACCESS_CONTROL_ADDRESS;
+    if (!AccessControlAddress) {
+      console.error("AccessControlAddress is not defined in environment variables.");
       return; // Or handle this scenario appropriately
     }
 
-    const MacMainContract = new ethers.Contract(MacMainAddress, MacMainABI, wallet);
-    const transaction = await MacMainContract.grantCreatorRole(walletAddress);
+    const AccessControlContract = new ethers.Contract(AccessControlAddress, AccessControlABI, wallet);
+    const transaction = await AccessControlContract.assignCreatorRole(walletAddress);
 
     await transaction.wait();
 
@@ -118,19 +119,19 @@ const LoginPage: NextPage = () => {
       return; // Or handle this scenario appropriately
     }
 
-    const provider = new ethers.providers.JsonRpcProvider("wss://bsc-testnet-rpc.publicnode.com");
+    const provider = new ethers.providers.JsonRpcProvider("https://97.rpc.thirdweb.com");
     const wallet = new ethers.Wallet(walletKey, provider);
 
-    const MacMainABI = MacMainJSON.abi;
+    const AccessControlABI = AccessControlJSON.abi;
 
-    const MacMainAddress = process.env.NEXT_PUBLIC_MAC_MAIN_ADDRESS;
-    if (!MacMainAddress) {
-      console.error("MAC_MAIN_ADDRESS is not defined in environment variables.");
+    const AccessControlAddress = process.env.NEXT_PUBLIC_ACCESS_CONTROL_ADDRESS;
+    if (!AccessControlAddress) {
+      console.error("AccessControlAddress is not defined in environment variables.");
       return; // Or handle this scenario appropriately
     }
 
-    const MacMainContract = new ethers.Contract(MacMainAddress, MacMainABI, wallet);
-    const transaction = await MacMainContract.grantAdvertiserRole(walletAddress);
+    const AccessControlContract = new ethers.Contract(AccessControlAddress, AccessControlABI, wallet);
+    const transaction = await AccessControlContract.assignAdvertiserRole(walletAddress);
 
     await transaction.wait();
 
