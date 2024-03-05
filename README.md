@@ -17,9 +17,9 @@ MAC is a decentralized marketplace designed for Advertisers and Creators to come
 
 Ever wondered how the MAC platform can transform the advertising world? Dive deep into our vision and discover the innovative features of MAC with our engaging pitch presentation. 🚀🎥
 
-👉 [Watch our pitch and see MAC in action!](https://youtu.be/Ay8OJkFNwkg)
+👉 [Watch our pitch and see MAC in action!](https://www.youtube.com/watch?v=R3aQCCzzQ3c)
 
-👉 [Check MAC's slideshow presentation!](https://www.canva.com/design/DAF9ivFcW38/uxTvzCmQmfAECCjMqo2lug/view?utm_content=DAF9ivFcW38&utm_campaign=share_your_design&utm_medium=link&utm_source=shareyourdesignpanel)
+👉 [Check MAC's slideshow presentation!](https://www.canva.com/design/DAF-ruPj-dc/DaMRhV4D9840ITq3GweVdw/view?utm_content=DAF-ruPj-dc&utm_campaign=share_your_design&utm_medium=link&utm_source=shareyourdesignpanel)
 
 ## 🚀 Smart Contracts on BNB Blockchain
 
@@ -39,11 +39,11 @@ Ever wondered how the MAC platform can transform the advertising world? Dive dee
   - Handles creation and execution of payments using ERC-20 tokens.
 - **AccessControl**: [`0x3ca34895dBeD1CDBcC86a6Ce234CBC79dB140fb8`](https://testnet.bscscan.com/address/0x3ca34895dBeD1CDBcC86a6Ce234CBC79dB140fb8)
   - Manages access control within the MAC context.
-- **ClickCountFunction**: waiting feature to be avaialable on BNB Smart Chain, but already developed and tested in other chains.
+- **ClickCountFunction**: waiting feature to be available on BNB Smart Chain, but already developed and tested in other chains.
   - Chainlink function for tracking advertisement clicks.
-- **ActiveAdsKeeper**: waiting feature to be avaialable on BNB Smart Chain, but already developed and tested in other chains.
+- **ActiveAdsKeeper**: waiting feature to be available on BNB Smart Chain, but already developed and tested in other chains.
   - Chainlink keeper for active advertisements, updating click counts and milestones.
-- **MilestoneKeeper**: waiting feature to be avaialable on BNB Smart Chain, but already developed and tested in other chains.
+- **MilestoneKeeper**: waiting feature to be available on BNB Smart Chain, but already developed and tested in other chains.
   - Manages milestones and executes payments based on Chainlink logs.
 - **Token**: [`0xD5C07768c7F387Aa5500d22ADD67715083fFA739`](https://testnet.bscscan.com/address/0xD5C07768c7F387Aa5500d22ADD67715083fFA739)
   - Used to mint tokens for your wallet and test our solution.
@@ -67,18 +67,6 @@ https://prisma-tech-mac-r.vercel.app/test
 #### SWAGGER
 
 https://prisma-tech-mac-backend.vercel.app/swagger
-
-#### Daily Active Ads Keeper
-
-https://automation.chain.link/fuji/3646668707667596729200555341527389313365931653295780104494029805417725006916
-
-#### Update Active ADS Kepper
-
-https://automation.chain.link/fuji/0x1a987bcf208d324bf59313750283de87cc4f1e723adbb3b7e8f1874c9b52467d
-
-#### Milestone Reached Payment Keeper
-
-https://automation.chain.link/fuji/0xdd203a4a37cbe5d1ec7671c1a8e2df628aa6cee30bcbc780cfdfb5caf1603a78
 
 ## 👨‍💻 Authors
 
