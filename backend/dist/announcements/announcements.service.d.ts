@@ -23,12 +23,14 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import { Model } from 'mongoose';
+import { Announcement, AnnouncementDocument } from './announcements.schema';
 import { CreateAnnouncementDto } from './dto/create-announcement.dto';
 import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
-import { Announcement, AnnouncementDocument } from './announcements.schema';
+import { CounterService } from 'src/counter/counter.service';
 export declare class AnnouncementsService {
     private announcementModel;
-    constructor(announcementModel: Model<AnnouncementDocument>);
+    private counterService;
+    constructor(announcementModel: Model<AnnouncementDocument>, counterService: CounterService);
     create(createAnnouncementDto: CreateAnnouncementDto): Promise<import("mongoose").Document<unknown, {}, AnnouncementDocument> & Announcement & import("mongoose").Document<any, any, any> & {
         _id: import("mongoose").Types.ObjectId;
     }>;

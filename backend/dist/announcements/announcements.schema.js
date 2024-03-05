@@ -75,10 +75,13 @@ __decorate([
     __metadata("design:type", String)
 ], Announcement.prototype, "linkParametrizado", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Proposal Id', example: 'SN123456' }),
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, swagger_1.ApiProperty)({
+        description: 'Blockchain Ads ID',
+        example: 1000,
+    }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
-], Announcement.prototype, "proposalId", void 0);
+], Announcement.prototype, "blockchainAdsId", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'Total amount to be paid',

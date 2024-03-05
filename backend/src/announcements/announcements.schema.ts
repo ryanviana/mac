@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
+import { Counter } from 'src/counter/counter.schema';
 
 @Schema()
 export class Announcement {
@@ -53,9 +54,12 @@ export class Announcement {
   @Prop({ required: true })
   linkParametrizado: string;
 
-  @ApiProperty({ description: 'Proposal Id', example: 'SN123456' })
-  @Prop({ required: true })
-  proposalId: number;
+  @ApiProperty({
+    description: 'Blockchain Ads ID',
+    example: 1000,
+  })
+  @Prop()
+  blockchainAdsId: number;
 
   @ApiProperty({
     description: 'Total amount to be paid',

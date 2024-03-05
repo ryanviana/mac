@@ -28,13 +28,16 @@ const references_module_1 = require("./references/references.module");
 const tokens_module_1 = require("./tokens/tokens.module");
 const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
+const counter_schema_1 = require("./counter/counter.schema");
+const counter_controller_1 = require("./counter/counter.controller");
+const counter_service_1 = require("./counter/counter.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            mongoose_1.MongooseModule.forRoot('mongodb+srv://rgb:admin@nodeexpress.ps2xp1a.mongodb.net/?retryWrites=true&w=majority', { dbName: 'MAC_AVALANCHE' }),
+            mongoose_1.MongooseModule.forRoot('mongodb+srv://rgb:admin@nodeexpress.ps2xp1a.mongodb.net/?retryWrites=true&w=majority', { dbName: 'MAC' }),
             mongoose_1.MongooseModule.forFeature([
                 { name: announcers_schema_1.Announcer.name, schema: announcers_schema_1.AnnouncerSchema },
             ]),
@@ -42,6 +45,7 @@ exports.AppModule = AppModule = __decorate([
             mongoose_1.MongooseModule.forFeature([
                 { name: announcements_schema_1.Announcement.name, schema: announcements_schema_1.AnnouncementSchema },
             ]),
+            mongoose_1.MongooseModule.forFeature([{ name: counter_schema_1.Counter.name, schema: counter_schema_1.CounterSchema }]),
             creators_module_1.CreatorsModule,
             announcers_module_1.AnnouncersModule,
             announcements_module_1.AnnouncementsModule,
@@ -58,12 +62,14 @@ exports.AppModule = AppModule = __decorate([
             creators_controller_1.CreatorsController,
             announcers_controller_1.AnnouncersController,
             announcements_controller_1.AnnouncementsController,
+            counter_controller_1.CounterController,
         ],
         providers: [
             app_service_1.AppService,
             creators_service_1.CreatorsService,
             announcers_service_1.AnnouncersService,
             announcements_service_1.AnnouncementsService,
+            counter_service_1.CounterService,
         ],
     })
 ], AppModule);

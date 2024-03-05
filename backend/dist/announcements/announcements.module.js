@@ -8,10 +8,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnnouncementsModule = void 0;
 const common_1 = require("@nestjs/common");
-const announcements_service_1 = require("./announcements.service");
-const announcements_controller_1 = require("./announcements.controller");
 const mongoose_1 = require("@nestjs/mongoose");
+const counter_module_1 = require("../counter/counter.module");
+const announcements_controller_1 = require("./announcements.controller");
 const announcements_schema_1 = require("./announcements.schema");
+const announcements_service_1 = require("./announcements.service");
 let AnnouncementsModule = class AnnouncementsModule {
 };
 exports.AnnouncementsModule = AnnouncementsModule;
@@ -21,6 +22,7 @@ exports.AnnouncementsModule = AnnouncementsModule = __decorate([
             mongoose_1.MongooseModule.forFeature([
                 { name: announcements_schema_1.Announcement.name, schema: announcements_schema_1.AnnouncementSchema },
             ]),
+            counter_module_1.CounterModule,
         ],
         controllers: [announcements_controller_1.AnnouncementsController],
         providers: [announcements_service_1.AnnouncementsService],

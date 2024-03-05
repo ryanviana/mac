@@ -17,13 +17,19 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const announcements_schema_1 = require("./announcements.schema");
+const counter_service_1 = require("../counter/counter.service");
 let AnnouncementsService = class AnnouncementsService {
-    constructor(announcementModel) {
+    constructor(announcementModel, counterService) {
         this.announcementModel = announcementModel;
+        this.counterService = counterService;
     }
     async create(createAnnouncementDto) {
-        const newAnnouncement = new this.announcementModel(createAnnouncementDto);
-        return newAnnouncement.save();
+        const blockchainAdsId = await this.counterService.getNextSequence('blockchainAdsId');
+        const createdAnnouncement = new this.announcementModel({
+            ...createAnnouncementDto,
+            blockchainAdsId,
+        });
+        return createdAnnouncement.save();
     }
     async findAll() {
         return this.announcementModel.find().exec();
@@ -46,6 +52,7 @@ exports.AnnouncementsService = AnnouncementsService;
 exports.AnnouncementsService = AnnouncementsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(announcements_schema_1.Announcement.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        counter_service_1.CounterService])
 ], AnnouncementsService);
 //# sourceMappingURL=announcements.service.js.map

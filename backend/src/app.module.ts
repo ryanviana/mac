@@ -22,12 +22,15 @@ import { ReferencesModule } from './references/references.module';
 import { TokensModule } from './tokens/tokens.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { Counter, CounterSchema } from './counter/counter.schema';
+import { CounterController } from './counter/counter.controller';
+import { CounterService } from './counter/counter.service';
 
 @Module({
   imports: [
     MongooseModule.forRoot(
       'mongodb+srv://rgb:admin@nodeexpress.ps2xp1a.mongodb.net/?retryWrites=true&w=majority',
-      { dbName: 'MAC_AVALANCHE' },
+      { dbName: 'MAC' },
     ),
     MongooseModule.forFeature([
       { name: Announcer.name, schema: AnnouncerSchema },
@@ -36,6 +39,7 @@ import { join } from 'path';
     MongooseModule.forFeature([
       { name: Announcement.name, schema: AnnouncementSchema },
     ]),
+    MongooseModule.forFeature([{ name: Counter.name, schema: CounterSchema }]),
     CreatorsModule,
     AnnouncersModule,
     AnnouncementsModule,
@@ -52,12 +56,14 @@ import { join } from 'path';
     CreatorsController,
     AnnouncersController,
     AnnouncementsController,
+    CounterController,
   ],
   providers: [
     AppService,
     CreatorsService,
     AnnouncersService,
     AnnouncementsService,
+    CounterService,
   ],
 })
 export class AppModule {}
