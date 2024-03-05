@@ -4,7 +4,6 @@ import React, { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ConnectWallet } from "./ConnectWallet";
 import { useAccountInfo, useParticleConnect } from "@particle-network/connect-react-ui";
 import "@particle-network/connect-react-ui/dist/index.css";
 import {
@@ -144,10 +143,10 @@ export const Header = () => {
         </div>
         <Link href="/home" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0">
           <div className="flex relative w-10 h-10">
-            <Image alt="MAC logo" className="cursor-pointer" fill src="/favicon.png" />
+            <Image alt="MAC logo" className="cursor-pointer" fill src="/favicon.png" sizes="40" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold leading-tight">Avalanche MAC</span>
+            <span className="font-bold leading-tight">MAC</span>
             <span className="text-xs">Marketplace for Advertisers and Creators</span>
           </div>
         </Link>
@@ -156,7 +155,6 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end flex-grow mr-4">
-        <ConnectWallet />
         {account && (
           <button className="ml-2 btn btn-ghost" onClick={handleLogout} title="Disconnect">
             {logoutLink.icon}

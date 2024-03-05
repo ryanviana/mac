@@ -7,7 +7,7 @@ module.exports = {
   daisyui: {
     themes: [
       {
-        avalancheMac: {
+        Mac: {
           primary: "#93BBFB",
           "primary-content": "#212638",
           secondary: "#DAE8FF",
@@ -39,7 +39,7 @@ module.exports = {
         },
       },
       {
-        avalancheMacDark: {
+        MacDark: {
           primary: "#212638",
           "primary-content": "#F9FBFF",
           secondary: "#323f61",

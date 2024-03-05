@@ -1,4 +1,4 @@
-const base = "https://backend-mac.vercel.app";
+const base = "https://prisma-tech-mac-backend.vercel.app";
 const clicksApi = base + "/clicks";
 const referencesApi = base + "/references";
 const referenceRegister = base + "/references/get-id-by-reference/";

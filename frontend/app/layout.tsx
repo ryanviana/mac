@@ -1,6 +1,6 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import { Metadata } from "next";
-import { AvalancheMacAppWithProviders } from "~~/components/AvalancheMacAppWithProviders";
+import { MacAppWithProviders } from "~~/components/MacAppWithProviders";
 import "~~/styles/globals.css";
 
 const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
@@ -11,16 +11,16 @@ const imageUrl = `${baseUrl}/thumbnail.png`;
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "Avalanche MAC App",
-    template: "%s | Avalanche MAC",
+    default: "MAC App",
+    template: "%s | MAC",
   },
-  description: "Built by RGB Group",
+  description: "Built by Prisma Tech",
   openGraph: {
     title: {
-      default: "Avalanche MAC App",
-      template: "%s | Avalanche MAC",
+      default: "MAC App",
+      template: "%s | MAC",
     },
-    description: "Built by RGB Group",
+    description: "Built by Prisma Tech",
     images: [
       {
         url: imageUrl,
@@ -31,24 +31,24 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     images: [imageUrl],
     title: {
-      default: "Avalanche MAC",
-      template: "%s | Avalanche MAC",
+      default: "MAC",
+      template: "%s | MAC",
     },
-    description: "Built by RGB Group",
+    description: "Built by Prisma Tech",
   },
   icons: {
     icon: [{ url: "/favicon.png", sizes: "32x32", type: "image/png" }],
   },
 };
 
-const AvalancheMacApp = ({ children }: { children: React.ReactNode }) => {
+const MacApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <html>
       <body>
-        <AvalancheMacAppWithProviders>{children}</AvalancheMacAppWithProviders>
+        <MacAppWithProviders>{children}</MacAppWithProviders>
       </body>
     </html>
   );
 };
 
-export default AvalancheMacApp;
+export default MacApp;

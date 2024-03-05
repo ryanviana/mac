@@ -34,11 +34,9 @@ const LoginPage: NextPage = () => {
       paymentToken: "define",
     });
 
-    const walletKey = process.env.NEXT_PUBLIC_ADMIN_KEY; // Nunca exponha sua chave privada em código de produção
+    const walletKey = process.env.NEXT_PUBLIC_ADMIN_KEY;
 
-    const provider = new ethers.providers.JsonRpcProvider(
-      "wss://bsc-testnet-rpc.publicnode.com	",
-    );
+    const provider = new ethers.providers.JsonRpcProvider("wss://bsc-testnet-rpc.publicnode.com	");
     const wallet = new ethers.Wallet(walletKey!, provider);
 
     const MacMainABI = MacMainJSON.abi;
@@ -50,7 +48,7 @@ const LoginPage: NextPage = () => {
     await transaction.wait();
 
     try {
-      const response = await fetch("https://backend-mac.vercel.app/creators", {
+      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/creators", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +68,7 @@ const LoginPage: NextPage = () => {
 
   async function checkCreator(email: string, walletAddress: string) {
     try {
-      const response = await fetch("https://backend-mac.vercel.app/creators", {
+      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/creators", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +84,6 @@ const LoginPage: NextPage = () => {
       } else {
         console.log("No creator found with that email.");
         const newCreator = createNewCreator(email, walletAddress);
-        console.log("New Creator:", newCreator);
         return newCreator;
       }
     } catch (error) {
@@ -107,9 +104,7 @@ const LoginPage: NextPage = () => {
 
     const walletKey = process.env.NEXT_PUBLIC_ADMIN_KEY; // Nunca exponha sua chave privada em código de produção
 
-    const provider = new ethers.providers.JsonRpcProvider(
-      "wss://bsc-testnet-rpc.publicnode.com",
-    );
+    const provider = new ethers.providers.JsonRpcProvider("wss://bsc-testnet-rpc.publicnode.com");
     const wallet = new ethers.Wallet(walletKey!, provider);
 
     const MacMainABI = MacMainJSON.abi;
@@ -121,7 +116,7 @@ const LoginPage: NextPage = () => {
     await transaction.wait();
 
     try {
-      const response = await fetch("https://backend-mac.vercel.app/announcers", {
+      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/announcers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,7 +136,7 @@ const LoginPage: NextPage = () => {
 
   async function checkAdvertiser(companyEmail: string, walletAddress: string) {
     try {
-      const response = await fetch("https://backend-mac.vercel.app/announcers", {
+      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/announcers", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -159,8 +154,6 @@ const LoginPage: NextPage = () => {
       } else {
         console.log("No advertiser found with that email.");
         const newAdvertiser = createNewAdvertiser(companyEmail, walletAddress);
-        console.log("New Advertiser:", newAdvertiser);
-
         return newAdvertiser;
       }
     } catch (error) {
@@ -174,9 +167,6 @@ const LoginPage: NextPage = () => {
       let foundUser;
 
       const userInfo = connectKit.particle.auth.getUserInfo();
-      if (userInfo) {
-        console.log(userInfo);
-      }
 
       const userEmail =
         userInfo?.google_email ||
@@ -200,7 +190,6 @@ const LoginPage: NextPage = () => {
       }
       if (foundUser) {
         setUser({ id: foundUser._id, type: selectedType, email: foundUser.email }); // Update global user state
-        console.log("User id:", foundUser._id);
       }
       // Proceed with login if user exists or a new user has been created
       const response = await fetch("/api/login", {

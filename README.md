@@ -10,7 +10,7 @@ MAC is a decentralized marketplace designed for Advertisers and Creators to come
 
 - **MAC Platform**: A marketplace for advertisers and creators to interact and forge meaningful deals. Explore it [here](https://avalanche-mac.vercel.app/). **Just don't forget to mint tokens to your wallet, the contract address is just below**!
 - **MAC-R Service**: Our proprietary service for creating custom & trackable advertisements. Try our [test custom url](https://avalanche-mac-url.vercel.app/test) which redirects to Google.
-- **Comprehensive Backend**: A fully deployed, [documented](https://backend-mac.vercel.app/swagger) (Swagger) backend application that supports the MAC platform. 
+- **Comprehensive Backend**: A fully deployed, [documented](https://prisma-tech-mac-backend.vercel.app/swagger) (Swagger) backend application that supports the MAC platform.
 - **Avalanche Blockchain**: Ensuring decentralized operation with automated daily payments and reliable campaign management.
 
 ## 📹 Dive into MAC: Our Exciting Pitch Presentation! 🌟
@@ -19,12 +19,12 @@ Ever wondered how the MAC platform can transform the advertising world? Dive dee
 
 👉 [Watch our pitch and see MAC in action!](https://youtu.be/Ay8OJkFNwkg)
 
-
 👉 [Check MAC's slideshow presentation!](https://www.canva.com/design/DAF9ivFcW38/uxTvzCmQmfAECCjMqo2lug/view?utm_content=DAF9ivFcW38&utm_campaign=share_your_design&utm_medium=link&utm_source=shareyourdesignpanel)
 
 ## 🚀 Smart Contracts on Avalanche Blockchain
 
 ### Architecture
+
 ![MAC](https://github.com/ryanviana/mac/assets/70733914/cb2d9af5-a3f2-4043-a34f-e4dac08f93b7)
 
 ![CHAINLINK](https://github.com/pjvperes/avalanche-mac/assets/70733914/2a1fb615-19c4-4514-bd71-b96c6db5a9c3)
@@ -58,31 +58,33 @@ Ever wondered how the MAC platform can transform the advertising world? Dive dee
 
 Particle Connect allows seamless onboarding into our Web3 application, offering an easy way for users to register and manage their wallet through a simplified social login - perfect for social media content creators.
 
-
-
 ## 🖱️ Links
 
 #### MAC
+
 (Just don't forget to mint tokens to your wallet, the contract address is just above!)
 
 https://avalanche-mac.vercel.app/
 
 #### MAC-R
+
 https://avalanche-mac-url.vercel.app/test
 
 #### SWAGGER
-https://backend-mac.vercel.app/swagger
+
+https://prisma-tech-mac-backend.vercel.app/swagger
 
 #### Daily Active Ads Keeper
+
 https://automation.chain.link/fuji/3646668707667596729200555341527389313365931653295780104494029805417725006916
 
 #### Update Active ADS Kepper
+
 https://automation.chain.link/fuji/0x1a987bcf208d324bf59313750283de87cc4f1e723adbb3b7e8f1874c9b52467d
 
 #### Milestone Reached Payment Keeper
+
 https://automation.chain.link/fuji/0xdd203a4a37cbe5d1ec7671c1a8e2df628aa6cee30bcbc780cfdfb5caf1603a78
-
-
 
 ## 👨‍💻 Authors
 

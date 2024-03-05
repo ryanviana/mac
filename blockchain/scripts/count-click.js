@@ -1,6 +1,6 @@
 const ethers = await import("npm:ethers@6.10.0");
 const proposalId = args[0];
-const URL = `https://backend-mac.vercel.app/clicks/count/${proposalId}`;
+const URL = `https://prisma-tech-mac-backend.vercel.app/clicks/count/${proposalId}`;
 
 let response = await Functions.makeHttpRequest({ url: URL });
 
