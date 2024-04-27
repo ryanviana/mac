@@ -63,4 +63,8 @@ contract MACAccessControl is AccessControl {
     function isUser(address account) public view returns (bool) {
         return hasRole(USER_ROLE, account);
     }
+
+    function isUserMsgSender() public view returns (bool) {
+        return hasRole(USER_ROLE, msg.sender);
+    }
 }
