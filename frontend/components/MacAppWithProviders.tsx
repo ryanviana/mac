@@ -16,32 +16,16 @@ const MacApp = ({ children }: { children: React.ReactNode }) => {
         <Header />
         <main className="relative flex flex-col flex-grow: 1">{children}</main>
         <Footer />
+        <Toaster /> {/* Use Toaster from react-hot-toast */}
       </div>
-      <Toaster />
     </>
   );
 };
 
 export const MacAppWithProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-    <ModalProvider
-      options={{
-        projectId: process.env.NEXT_PUBLIC_PARTICLE_PROJECT_ID as string,
-        clientKey: process.env.NEXT_PUBLIC_PARTICLE_CLIENT_KEY as string,
-        appId: process.env.NEXT_PUBLIC_PARTICLE_APP_ID as string,
-        chains: [BNBChainTestnet],
-        particleWalletEntry: {
-          displayWalletEntry: true, //display wallet button when connect particle success.
-          defaultWalletEntryPosition: WalletEntryPosition.BR, // BR = Circle opens on bottom right
-          // supportChains: [],
-        },
-      }}
-      theme={"auto"}
-      walletSort={["Particle Auth", "Wallet"]} // Wallet order
-    >
       <UserProvider>
         <MacApp>{children}</MacApp>
       </UserProvider>
-    </ModalProvider>
   );
 };

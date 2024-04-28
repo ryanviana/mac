@@ -5,244 +5,112 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import AccessControlJSON from "../abis/AccessControl.json";
 import MacMainJSON from "../abis/MacMain.json";
-import { ConnectButton, useConnectKit } from "@particle-network/connect-react-ui";
-import "@particle-network/connect-react-ui/dist/index.css";
 import "dotenv/config";
 import { ethers } from "ethers";
 import type { NextPage } from "next";
 import { BuildingStorefrontIcon, UserIcon } from "@heroicons/react/24/solid";
 import { useUser } from "~~/context/globalState";
+import 'react-toastify/dist/ReactToastify.css';
 
 const LoginPage: NextPage = () => {
   const [selectedType, setSelectedType] = useState("none");
   const [isNewProfile, setIsNewProfile] = useState(false);
   const { setUser } = useUser();
-  const connectKit = useConnectKit();
-  const [isLoading, setIsLoading] = useState(false);
-  // const ParticleProvider = useParticleProvider();
+  const [isLoadingRegister, setIsLoadingRegister] = useState(false);
+  const [isLoadingWallet, setIsLoadingWallet] = useState(false);
+  const [isLoadingCheckin, setIsLoadingCheckin] = useState(false);
+  const [walletConnected, setWalletConnected] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [isCheckedIn, setIsCheckedIn] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // State variable for error message
 
   const router = useRouter();
-
-  async function createNewCreator(email: string, walletAddress: string) {
-    const body = JSON.stringify({
-      name: "define",
-      biography: "define",
-      occupation: "define",
-      targetAudience: "define",
-      stars: 0,
-      link: "define",
-      email: email,
-      CPM: 0,
-      walletAddress: walletAddress,
-      paymentToken: "define",
-    });
-
-    const walletKey = process.env.NEXT_PUBLIC_ADMIN_KEY;
-    if (!walletKey) {
-      console.error("ADMIN_KEY is not defined in environment variables.");
-      return; // Or handle this scenario appropriately
-    }
-
-    const provider = new ethers.providers.JsonRpcProvider("https://97.rpc.thirdweb.com");
-    const wallet = new ethers.Wallet(walletKey, provider);
-
-    const AccessControlABI = AccessControlJSON.abi;
-
-    const AccessControlAddress = process.env.NEXT_PUBLIC_ACCESS_CONTROL_ADDRESS;
-    if (!AccessControlAddress) {
-      console.error("AccessControlAddress is not defined in environment variables.");
-      return; // Or handle this scenario appropriately
-    }
-
-    const AccessControlContract = new ethers.Contract(AccessControlAddress, AccessControlABI, wallet);
-    const transaction = await AccessControlContract.assignCreatorRole(walletAddress);
-
-    await transaction.wait();
-
+  
+  async function handleConnect() {
     try {
-      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/creators", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body,
-      });
+      setIsLoadingWallet(true);
 
-      setIsNewProfile(true);
+      if (window.ethereum) {
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        console.log("Connected to wallet:", address);
 
-      const data = await response.json();
-      console.log("Creator created:", data);
-      return data;
+        setWalletConnected(true);
+      } else {
+        throw new Error("Metamask not detected. Please install Metamask and try again.");
+      }
+
+      setIsLoadingWallet(false);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("An error occurred during the wallet connection process: ", error);
+      setIsLoadingWallet(false);
     }
   }
 
-  async function checkCreator(email: string, walletAddress: string) {
+  const handleRegisterClick = async () => {
     try {
-      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/creators", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      setIsLoadingRegister(true);
 
-      const creators = await response.json();
-      const filteredCreators = creators.filter((creator: { email: string }) => creator.email === email);
-
-      if (filteredCreators.length > 0) {
-        console.log("Creator found:", filteredCreators[0]);
-        return filteredCreators[0];
-      } else {
-        console.log("No creator found with that email.");
-        const newCreator = createNewCreator(email, walletAddress);
-        return newCreator;
+      if (!walletConnected) {
+        console.error("Wallet is not connected.");
+        setIsLoadingRegister(false);
+        return;
       }
+  
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+  
+      const contractABI = AccessControlJSON.abi;
+      const contractAddress = "0x56C87CA6cC22C5a93fBA70108BdBEeaC4d8989ed";
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+  
+      const transaction = await contract.assignUserRole();
+      await transaction.wait();
+  
+      console.log("User registered successfully.");
+
+      setIsRegistered(true);
+      setIsLoadingRegister(false);
     } catch (error) {
-      console.error("Error:", error);
-      return []; // Return an empty array in case of an error
+      console.error("An error occurred during the registration process: ", error);
+      setIsLoadingRegister(false);
     }
-  }
+  };
 
-  async function createNewAdvertiser(email: string, walletAddress: string) {
-    const body = JSON.stringify({
-      razaoSocial: "define",
-      quantidadeAnunciosFeitos: 0,
-      stars: 0,
-      link: "define",
-      email: email,
-      walletAddress: walletAddress,
-    });
-
-    const walletKey = process.env.NEXT_PUBLIC_ADMIN_KEY;
-    if (!walletKey) {
-      console.error("ADMIN_KEY is not defined in environment variables.");
-      return; // Or handle this scenario appropriately
-    }
-
-    const provider = new ethers.providers.JsonRpcProvider("https://97.rpc.thirdweb.com");
-    const wallet = new ethers.Wallet(walletKey, provider);
-
-    const AccessControlABI = AccessControlJSON.abi;
-
-    const AccessControlAddress = process.env.NEXT_PUBLIC_ACCESS_CONTROL_ADDRESS;
-    if (!AccessControlAddress) {
-      console.error("AccessControlAddress is not defined in environment variables.");
-      return; // Or handle this scenario appropriately
-    }
-
-    const AccessControlContract = new ethers.Contract(AccessControlAddress, AccessControlABI, wallet);
-    const transaction = await AccessControlContract.assignAdvertiserRole(walletAddress);
-
-    await transaction.wait();
-
+  const handleCheckIn = async () => {
     try {
-      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/announcers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body,
-      });
+      setIsLoadingCheckin(true);
 
-      setIsNewProfile(true);
+      if (!walletConnected) {
+        console.error("Wallet is not connected.");
+        setIsLoadingCheckin(false);
+        return;
+      }
+  
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+  
+      const contractABI = AccessControlJSON.abi;
+      const contractAddress = "0x56C87CA6cC22C5a93fBA70108BdBEeaC4d8989ed";
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+  
+      const transaction = await contract.checkIn();
+      await transaction.wait();
+  
+      console.log("User checked in successfully.");
 
-      const data = await response.json();
-      console.log("Advertiser created:", data);
-      return data;
+      setIsCheckedIn(true);
+      setIsLoadingCheckin(false);
     } catch (error) {
-      console.error("Error:", error);
-    }
-  }
+      console.error("An error occurred during the check-in process: ", error);
+      setIsLoadingCheckin(false);
 
-  async function checkAdvertiser(companyEmail: string, walletAddress: string) {
-    try {
-      const response = await fetch("https://prisma-tech-mac-backend.vercel.app/announcers", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const advertisers = await response.json();
-      const filteredAdvertisers = advertisers.filter(
-        (advertiser: { email: string }) => advertiser.email === companyEmail,
-      );
-
-      if (filteredAdvertisers.length > 0) {
-        console.log("Advertiser found:", filteredAdvertisers[0]);
-        return filteredAdvertisers[0];
-      } else {
-        console.log("No advertiser found with that email.");
-        const newAdvertiser = createNewAdvertiser(companyEmail, walletAddress);
-        return newAdvertiser;
+      if (error.data && error.data.message && error.data.message.includes("You must wait 6 hours")) {
+        // Update state to display the error message in the UI
+        setErrorMessage("You can only check in once every 6 hours.");
       }
-    } catch (error) {
-      console.error("Error:", error);
-      return [];
-    }
-  }
-
-  const handleConnect = async () => {
-    try {
-      setIsLoading(true); // Set loading to true when connection starts
-
-      let foundUser;
-
-      const userInfo = connectKit.particle.auth.getUserInfo();
-
-      const userEmail =
-        userInfo?.google_email ||
-        userInfo?.email ||
-        userInfo?.facebook_email ||
-        userInfo?.apple_email ||
-        userInfo?.twitter_email ||
-        userInfo?.github_email ||
-        userInfo?.linkedin_email ||
-        userInfo?.discord_email ||
-        userInfo?.microsoft_email;
-
-      const userAddress = userInfo?.wallets?.[0]?.public_address;
-
-      if (selectedType === "advertiser" && userEmail && userAddress) {
-        foundUser = await checkAdvertiser(userEmail, userAddress);
-      } else if (selectedType === "creator" && userEmail && userAddress) {
-        foundUser = await checkCreator(userEmail, userAddress);
-      } else {
-        throw new Error("Invalid user type");
-      }
-
-      if (foundUser) {
-        setUser({ id: foundUser._id, type: selectedType, email: foundUser.email }); // Update global user state
-      }
-      // Proceed with login if user exists or a new user has been created
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userEmail, type: selectedType }),
-      });
-      if (!response.ok) {
-        throw new Error("Login request failed");
-      }
-      const data = await response.json();
-      localStorage.setItem("token", data.token);
-
-      if (isNewProfile && selectedType === "advertiser") {
-        router.push("/advertiser-profile");
-        setIsNewProfile(false);
-      } else if (isNewProfile && selectedType === "creator") {
-        router.push("/creator-profile");
-        setIsNewProfile(false);
-      } else {
-        router.push("/home");
-      }
-
-      setIsLoading(false);
-    } catch (error) {
-      console.error("An error occurred during the login process: ", error);
-      setIsLoading(false);
     }
   };
 
@@ -263,15 +131,39 @@ const LoginPage: NextPage = () => {
               </h1>
               <p>
                 <span className="px-6 text-xl text-gray-500">
-                  First, register on our platform using your Metamask ⬇️
+                  1) First, register on our platform using your Metamask ⬇️
                 </span>
               </p>
+              {!walletConnected ? (
+                <div className="flex gap-3 px-6 pt-4">
+                  <button
+                    type="button"
+                    className="inline-flex justify-center items-center px-6 py-2.5 shadow hover:opacity-80 transition ease-in-out duration-150 bg-primary text-white rounded-xl"
+                    onClick={handleConnect}
+                  >
+                    Connect wallet
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-3 px-6 pt-4">
+                  <button
+                    type="button"
+                    className="inline-flex justify-center items-center px-6 py-2.5 shadow opacity-50 cursor-not-allowed transition ease-in-out duration-150 bg-blue-800 text-white rounded-xl"
+                    disabled
+                  >
+                    Wallet connected
+                  </button>
+                </div>
+              )}
               <div className="flex gap-3 px-6 pt-4">
                 <button
                   type="button"
                   className="inline-flex justify-center items-center px-6 py-2.5 shadow hover:opacity-80 transition ease-in-out duration-150 bg-primary text-white rounded-xl"
+                  onClick={isCheckedIn ? undefined : isLoadingRegister ? undefined : handleRegisterClick}
+                  disabled={isRegistered} // Disable button if user is already registered
+                  style={{ cursor: isRegistered ? 'not-allowed' : 'pointer' }} // Change cursor style
                 >
-                  Register
+                  {isLoadingRegister ? 'Loading...' : isRegistered ? 'Already Registered' : 'Register'}
                 </button>
               </div>
             </div>
@@ -287,16 +179,15 @@ const LoginPage: NextPage = () => {
             </div>
           </div>
         </div>
-        <div className="p-4 flex flex-col justify-center rounded-xl border border-blue-700 bg-base-100 mb-5">
+        <div className="p-4 flex flex-col justify-center rounded-xl border border-blue-700 bg-base-100 mb-5 min-w-[980px]">
           <div className="flex flex-row items-stretch">
             <div className="flex flex-col items-start mt-0">
               <h1 className="text-6xl sm:text-7xl md:text-8xl px-6 font-bold text-gray-900">
                 <div className="flex flex-col space-y-1 mt-0">
                   <div>
-                    <span className="text-5xl text-[#ef875f]">Let's</span>
-                    <span className="text-5xl text-[#62a4a6] ml-4">Forkin</span>
+                    <span className="text-5xl text-[#ef875f]">Check-in</span>
+                    <span className="text-5xl text-[#62a4a6] ml-4">now!</span>
                   </div>
-                  <span className="text-5xl text-[#e2b53e]">Dance!</span>
                 </div>
               </h1>
               <p>
@@ -304,19 +195,25 @@ const LoginPage: NextPage = () => {
                 <br />
                 <span className="px-6 text-xl text-gray-500">done every 6 hours.</span>
               </p>
+              {errorMessage && ( // Render error message if present
+                <div className="text-red-500 px-6 pt-4">{errorMessage}</div>
+              )}
               <div className="flex gap-3 px-6 pt-4">
                 <button
                   type="button"
                   className="inline-flex justify-center items-center px-6 py-2.5 shadow hover:opacity-80 transition ease-in-out duration-150 bg-primary text-white rounded-xl"
+                  onClick={handleCheckIn}
+                  disabled={isCheckedIn} // Disable button if user is already checked in
+                  style={{ cursor: isCheckedIn ? 'not-allowed' : 'pointer' }} // Change cursor style
                 >
-                  Check in
+                  {isCheckedIn ? 'Checked In' : 'Check In'}
                 </button>
               </div>
             </div>
             <div className="flex flex-col items-center justify-center">
               <Image
-                src="/hero-logo.png"
-                alt="LFD Logo"
+                src="/favicon.png"
+                alt="Tanssi Logo"
                 width={384}
                 height={384}
                 sizes="(min-width: 1024px) 384px, (min-width: 768px) 320px, (min-width: 640px) 288px, 256px"
