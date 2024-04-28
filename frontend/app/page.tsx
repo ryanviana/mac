@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import MacMainJSON from "../abis/MacMain.json";
 import AccessControlJSON from "../abis/AccessControl.json";
+import MacMainJSON from "../abis/MacMain.json";
 import { ConnectButton, useConnectKit } from "@particle-network/connect-react-ui";
 import "@particle-network/connect-react-ui/dist/index.css";
 import "dotenv/config";
@@ -247,43 +248,82 @@ const LoginPage: NextPage = () => {
 
   return (
     <div className="flex flex-col h-screen bg-base-200">
-      <div className="grid place-items-center mx-2 my-5 sm:my-auto">
-        <div className="flex flex-row justify-around font-semibold text-lg w-11/12 sm:w-8/12 md:w-6/12 lg:w-4/12 2xl:w-3/12 bg-base-100 border border-blue-700 rounded-xl shadow-lg mb-10">
-          <div
-            className={`flex flex-col items-center justify-center flex-grow rounded-l-xl border-r border-blue-700 p-12 sm:p-6 ${
-              selectedType === "advertiser" ? "bg-base-300" : ""
-            }`}
-            onClick={() => setSelectedType("advertiser")}
-          >
-            <BuildingStorefrontIcon className="w-4 h-4" />
-            <button>I am an advertiser</button>
-          </div>
-
-          <div
-            className={`flex flex-col items-center justify-center flex-grow rounded-r-xl p-12 sm:p-6 ${
-              selectedType === "creator" ? "bg-base-300" : ""
-            }`}
-            onClick={() => setSelectedType("creator")}
-          >
-            <UserIcon className="w-4 h-4" />
-            <button>I am a creator</button>
+      <div className="grid place-items-center mx-2 sm:my-auto">
+        <div className="p-4 flex flex-col justify-center rounded-xl border border-blue-700 bg-base-100 mb-5">
+          <div className="flex flex-row items-stretch">
+            <div className="flex flex-col items-start mt-0">
+              <h1 className="text-6xl sm:text-7xl md:text-8xl px-6 font-bold text-gray-900">
+                <div className="flex flex-col space-y-1 mt-0">
+                  <div>
+                    <span className="text-5xl text-[#ef875f]">Let's</span>
+                    <span className="text-5xl text-[#62a4a6] ml-4">Forkin</span>
+                  </div>
+                  <span className="text-5xl text-[#e2b53e]">Dance!</span>
+                </div>
+              </h1>
+              <p>
+                <span className="px-6 text-xl text-gray-500">
+                  First, register on our platform using your Metamask ⬇️
+                </span>
+              </p>
+              <div className="flex gap-3 px-6 pt-4">
+                <button
+                  type="button"
+                  className="inline-flex justify-center items-center px-6 py-2.5 shadow hover:opacity-80 transition ease-in-out duration-150 bg-primary text-white rounded-xl"
+                >
+                  Register
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <Image
+                src="/hero-logo.png"
+                alt="LFD Logo"
+                width={384}
+                height={384}
+                sizes="(min-width: 1024px) 384px, (min-width: 768px) 320px, (min-width: 640px) 288px, 256px"
+                className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96"
+              />
+            </div>
           </div>
         </div>
-
-        <div className=" flex flex-col border border-blue-700 w-11/12 p-6 sm:w-8/12 md:w-6/12 lg:w-4/12 2xl:w-3/12 sm:px-10 sm:py-6 bg-base-100 rounded-xl shadow-lg items-center">
-          <h2 className="text-center font-semibold text-3xl lg:text-4xl mb-6">
-            Login {selectedType === "advertiser" ? "as Advertiser" : selectedType === "creator" ? "as Creator" : ""}
-          </h2>
-          <ConnectButton />
-          <button
-            className={`mt-4 ${
-              isLoading ? "bg-gray-400" : "bg-green-500 hover:bg-green-700"
-            } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
-            onClick={handleConnect}
-            disabled={isLoading}
-          >
-            {isLoading ? "Loading..." : "Enter"}
-          </button>
+        <div className="p-4 flex flex-col justify-center rounded-xl border border-blue-700 bg-base-100 mb-5">
+          <div className="flex flex-row items-stretch">
+            <div className="flex flex-col items-start mt-0">
+              <h1 className="text-6xl sm:text-7xl md:text-8xl px-6 font-bold text-gray-900">
+                <div className="flex flex-col space-y-1 mt-0">
+                  <div>
+                    <span className="text-5xl text-[#ef875f]">Let's</span>
+                    <span className="text-5xl text-[#62a4a6] ml-4">Forkin</span>
+                  </div>
+                  <span className="text-5xl text-[#e2b53e]">Dance!</span>
+                </div>
+              </h1>
+              <p>
+                <span className="px-6 text-xl text-gray-500">Now you can check in. Remember that check-in can be</span>
+                <br />
+                <span className="px-6 text-xl text-gray-500">done every 6 hours.</span>
+              </p>
+              <div className="flex gap-3 px-6 pt-4">
+                <button
+                  type="button"
+                  className="inline-flex justify-center items-center px-6 py-2.5 shadow hover:opacity-80 transition ease-in-out duration-150 bg-primary text-white rounded-xl"
+                >
+                  Check in
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <Image
+                src="/hero-logo.png"
+                alt="LFD Logo"
+                width={384}
+                height={384}
+                sizes="(min-width: 1024px) 384px, (min-width: 768px) 320px, (min-width: 640px) 288px, 256px"
+                className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
