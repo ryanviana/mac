@@ -103,7 +103,7 @@ const LoginPage: NextPage = () => {
 
       setIsCheckedIn(true);
       setIsLoadingCheckin(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("An error occurred during the check-in process: ", error);
       setIsLoadingCheckin(false);
 
