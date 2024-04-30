@@ -8,9 +8,9 @@ import MacMainJSON from "../abis/MacMain.json";
 import "dotenv/config";
 import { ethers } from "ethers";
 import type { NextPage } from "next";
+import "react-toastify/dist/ReactToastify.css";
 import { BuildingStorefrontIcon, UserIcon } from "@heroicons/react/24/solid";
 import { useUser } from "~~/context/globalState";
-import 'react-toastify/dist/ReactToastify.css';
 
 const LoginPage: NextPage = () => {
   const [selectedType, setSelectedType] = useState("none");
@@ -25,7 +25,7 @@ const LoginPage: NextPage = () => {
   const [errorMessage, setErrorMessage] = useState(""); // State variable for error message
 
   const router = useRouter();
-  
+
   async function handleConnect() {
     try {
       setIsLoadingWallet(true);
@@ -58,17 +58,17 @@ const LoginPage: NextPage = () => {
         setIsLoadingRegister(false);
         return;
       }
-  
+
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-  
+
       const contractABI = AccessControlJSON.abi;
       const contractAddress = "0x56C87CA6cC22C5a93fBA70108BdBEeaC4d8989ed";
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
-  
+
       const transaction = await contract.assignUserRole();
       await transaction.wait();
-  
+
       console.log("User registered successfully.");
 
       setIsRegistered(true);
@@ -88,17 +88,17 @@ const LoginPage: NextPage = () => {
         setIsLoadingCheckin(false);
         return;
       }
-  
+
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-  
+
       const contractABI = AccessControlJSON.abi;
       const contractAddress = "0x56C87CA6cC22C5a93fBA70108BdBEeaC4d8989ed";
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
-  
+
       const transaction = await contract.checkIn();
       await transaction.wait();
-  
+
       console.log("User checked in successfully.");
 
       setIsCheckedIn(true);
@@ -133,6 +133,19 @@ const LoginPage: NextPage = () => {
                 <span className="px-6 text-xl text-gray-500">
                   1) First, register on our platform using your Metamask ⬇️
                 </span>
+                <br />
+                <span className="px-6 text-xl text-yellow-500">⚠️ This action requires that you have faucets</span>
+                <br />
+                <span className="pl-6 text-xl text-yellow-500">Get faucets on MAC LFD page: </span>
+                <a
+                  href="https://lfd.tanssi.network/mac?back=y"
+                  target="_blank"
+                  rel="noreferrer"
+                  className=" text-xl text-yellow-500 underline"
+                >
+                  {" "}
+                  here
+                </a>
               </p>
               {!walletConnected ? (
                 <div className="flex gap-3 px-6 pt-4">
@@ -161,9 +174,9 @@ const LoginPage: NextPage = () => {
                   className="inline-flex justify-center items-center px-6 py-2.5 shadow hover:opacity-80 transition ease-in-out duration-150 bg-primary text-white rounded-xl"
                   onClick={isCheckedIn ? undefined : isLoadingRegister ? undefined : handleRegisterClick}
                   disabled={isRegistered} // Disable button if user is already registered
-                  style={{ cursor: isRegistered ? 'not-allowed' : 'pointer' }} // Change cursor style
+                  style={{ cursor: isRegistered ? "not-allowed" : "pointer" }} // Change cursor style
                 >
-                  {isLoadingRegister ? 'Loading...' : isRegistered ? 'Already Registered' : 'Register'}
+                  {isLoadingRegister ? "Loading..." : isRegistered ? "Already Registered" : "Register"}
                 </button>
               </div>
             </div>
@@ -204,9 +217,9 @@ const LoginPage: NextPage = () => {
                   className="inline-flex justify-center items-center px-6 py-2.5 shadow hover:opacity-80 transition ease-in-out duration-150 bg-primary text-white rounded-xl"
                   onClick={handleCheckIn}
                   disabled={isCheckedIn} // Disable button if user is already checked in
-                  style={{ cursor: isCheckedIn ? 'not-allowed' : 'pointer' }} // Change cursor style
+                  style={{ cursor: isCheckedIn ? "not-allowed" : "pointer" }} // Change cursor style
                 >
-                  {isCheckedIn ? 'Checked In' : 'Check In'}
+                  {isCheckedIn ? "Checked In" : "Check In"}
                 </button>
               </div>
             </div>
