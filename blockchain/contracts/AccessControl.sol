@@ -9,11 +9,27 @@ contract MACAccessControl is AccessControl {
     bytes32 public constant ADVERTISER_ROLE = keccak256("ADVERTISER_ROLE");
     bytes32 public constant CREATOR_ROLE = keccak256("CREATOR_ROLE");
 
+    mapping(address => bool) users;
+    mapping(address => uint256) lastCheckInTime; // Mapeia o último horário de check-in de cada endereço
+
+    uint256 constant checkInInterval = 6 hours; // Intervalo de tempo entre os check-ins
+
     // Constructor to set up roles
     constructor() {
         _grantRole(ADMIN_ROLE, msg.sender);
         _setRoleAdmin(ADVERTISER_ROLE, ADMIN_ROLE);
         _setRoleAdmin(CREATOR_ROLE, ADMIN_ROLE);
+    }
+
+    //Check-in function
+    function checkIn() public returns (bool) {
+        require(
+            block.timestamp >= lastCheckInTime[msg.sender] + checkInInterval,
+            "You must wait 6 hours from the last check-in"
+        );
+
+        lastCheckInTime[msg.sender] = block.timestamp;
+        return true;      
     }
 
     // Function to assign the Advertiser role to a user
@@ -36,6 +52,20 @@ contract MACAccessControl is AccessControl {
         revokeRole(CREATOR_ROLE, user);
     }
 
+    // Function to assign the User role to a user
+    function assignUserRole() public returns (bool) {
+        users[msg.sender] = true;
+
+        return true;
+    }
+
+    // Function to revoke the User role from a user
+    function revokeUserRole() public returns(bool) {
+        users[msg.sender] = false;
+
+        return true;
+    }
+
     function isCreator(address account) public view returns (bool) {
         return hasRole(CREATOR_ROLE, account);
     }
@@ -46,5 +76,17 @@ contract MACAccessControl is AccessControl {
 
     function isAdmin(address account) public view returns (bool) {
         return hasRole(ADMIN_ROLE, account);
+    }
+
+    function isUser(address account) public view returns (bool) {
+        return users[account];
+    }
+
+    function isUserMsgSender() public view returns (bool) {
+        return users[msg.sender];
+    }
+
+    function getLastCheckInTime(address _user) public view returns (uint256) {
+        return lastCheckInTime[_user];
     }
 }
