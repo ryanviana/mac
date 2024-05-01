@@ -54,7 +54,7 @@ const LoginPage: NextPage = () => {
       const signer = provider.getSigner();
 
       const contractABI = AccessControlJSON.abi;
-      const contractAddress = "0x56C87CA6cC22C5a93fBA70108BdBEeaC4d8989ed";
+      const contractAddress = "0xAbC4140a1bAC0020BEfF9a917a18af50804Ef1Dc";
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
       const transaction = await contract.assignUserRole();
@@ -84,7 +84,7 @@ const LoginPage: NextPage = () => {
       const signer = provider.getSigner();
 
       const contractABI = AccessControlJSON.abi;
-      const contractAddress = "0x56C87CA6cC22C5a93fBA70108BdBEeaC4d8989ed";
+      const contractAddress = "0xAbC4140a1bAC0020BEfF9a917a18af50804Ef1Dc";
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
       const transaction = await contract.checkIn();
