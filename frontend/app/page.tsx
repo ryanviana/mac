@@ -2,20 +2,13 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import AccessControlJSON from "../abis/AccessControl.json";
-import MacMainJSON from "../abis/MacMain.json";
 import "dotenv/config";
 import { ethers } from "ethers";
 import type { NextPage } from "next";
 import "react-toastify/dist/ReactToastify.css";
-import { BuildingStorefrontIcon, UserIcon } from "@heroicons/react/24/solid";
-import { useUser } from "~~/context/globalState";
 
 const LoginPage: NextPage = () => {
-  const [selectedType, setSelectedType] = useState("none");
-  const [isNewProfile, setIsNewProfile] = useState(false);
-  const { setUser } = useUser();
   const [isLoadingRegister, setIsLoadingRegister] = useState(false);
   const [isLoadingWallet, setIsLoadingWallet] = useState(false);
   const [isLoadingCheckin, setIsLoadingCheckin] = useState(false);
@@ -23,8 +16,6 @@ const LoginPage: NextPage = () => {
   const [isRegistered, setIsRegistered] = useState(false);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // State variable for error message
-
-  const router = useRouter();
 
   async function handleConnect() {
     try {
@@ -123,7 +114,7 @@ const LoginPage: NextPage = () => {
               <h1 className="text-6xl sm:text-7xl md:text-8xl px-6 font-bold text-gray-900">
                 <div className="flex flex-col space-y-1 mt-0">
                   <div>
-                    <span className="text-5xl text-[#ef875f]">Let's</span>
+                    <span className="text-5xl text-[#ef875f]">{`Let's`}</span>
                     <span className="text-5xl text-[#62a4a6] ml-4">Forkin</span>
                   </div>
                   <span className="text-5xl text-[#e2b53e]">Dance!</span>
@@ -153,8 +144,9 @@ const LoginPage: NextPage = () => {
                     type="button"
                     className="inline-flex justify-center items-center px-6 py-2.5 shadow hover:opacity-80 transition ease-in-out duration-150 bg-primary text-white rounded-xl"
                     onClick={handleConnect}
+                    disabled={isLoadingWallet}
                   >
-                    Connect wallet
+                    {isLoadingWallet ? "Connecting..." : "Connect Wallet"}
                   </button>
                 </div>
               ) : (
@@ -216,10 +208,10 @@ const LoginPage: NextPage = () => {
                   type="button"
                   className="inline-flex justify-center items-center px-6 py-2.5 shadow hover:opacity-80 transition ease-in-out duration-150 bg-primary text-white rounded-xl"
                   onClick={handleCheckIn}
-                  disabled={isCheckedIn} // Disable button if user is already checked in
+                  disabled={isLoadingCheckin || isCheckedIn} // Disable button if user is already checked in
                   style={{ cursor: isCheckedIn ? "not-allowed" : "pointer" }} // Change cursor style
                 >
-                  {isCheckedIn ? "Checked In" : "Check In"}
+                  {isLoadingCheckin ? "Checking In..." : isCheckedIn ? "Checked In" : "Check In"}
                 </button>
               </div>
             </div>

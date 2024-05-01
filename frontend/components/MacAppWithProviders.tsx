@@ -1,9 +1,5 @@
 "use client";
 
-import { WalletEntryPosition } from "@particle-network/auth";
-import { BNBChainTestnet } from "@particle-network/chains";
-import { ModalProvider } from "@particle-network/connect-react-ui";
-import "@particle-network/connectkit/dist/index.css";
 import { Toaster } from "react-hot-toast";
 import { Footer } from "~~/components/Footer";
 import { Header } from "~~/components/Header";
@@ -24,8 +20,8 @@ const MacApp = ({ children }: { children: React.ReactNode }) => {
 
 export const MacAppWithProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-      <UserProvider>
-        <MacApp>{children}</MacApp>
-      </UserProvider>
+    <UserProvider>
+      <MacApp>{children}</MacApp>
+    </UserProvider>
   );
 };
